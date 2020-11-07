@@ -1,0 +1,13 @@
+global_frame: map
+
+update_frequency: 5.0
+publish_frequency: 0.0
+static_map: true
+
+plugins:
+ - {name: static_map, type: "costmap_2d::StaticLayer"}
+ - {name: obstacles,  type: "costmap_2d::ObstacleLayer"}
+ - {name: inflater,   type: "costmap_2d::InflationLayer"}
+
+footprint: [[-0.55, -0.25], [-0.55, 0.25], [0.55, 0.25], [0.55, -0.25]]
+footprint_padding: 0.1

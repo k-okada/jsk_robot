@@ -1,0 +1,39 @@
+<launch>
+  <machine name="localhost" address="localhost" default="true" />
+  <!-- Set topics -->
+  <arg name="map_frame" default="eng2" />
+  <arg name="map_file" default="$(find jsk_maps)/raw_maps/eng2-7f-0.05.yaml"/>
+  <arg name="keepout_map_file" default="$(find jsk_maps)/raw_maps/eng2-7f-0.05_keepout.yaml" />
+  <arg name="use_keepout" default="true" />
+
+  <arg name="cmd_vel_topic" default="/spot/cmd_vel" />
+  <arg name="scan_topic"     default="base_scan" />
+  <arg name="map_topic" default="map" />
+  <arg name="odom_topic" default="/spot/odometry" />
+
+  <!-- jsk_maps -->
+  <include file="$(find jsk_maps)/launch/start_map_$(arg map_frame).launch">
+    <arg name="launch_map_server" value="true" />
+    <arg name="keepout" value="$(arg use_keepout)" />
+  </include>
+
+  <!-- localize the robot -->
+  <node pkg="amcl" type="amcl" name="amcl">
+    <remap from="scan" to="$(arg scan_topic)" />
+    <remap from="map" to="$(arg map_topic)" />
+    <param name="use_map_topic" value="false" />
+    <rosparam file="$(find jsk_spot_startup)/config/navigation/amcl.yaml" command="load" />
+  </node>
+
+  <!-- planners, costmaps, etc -->
+  <node pkg="move_base" type="move_base" name="move_base" respawn="true" output="screen">
+    <rosparam file="$(find jsk_spot_startup)/config/navigation/costmap_common.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find jsk_spot_startup)/config/navigation/costmap_common.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find jsk_spot_startup)/config/navigation/costmap_local.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find jsk_spot_startup)/config/navigation/costmap_global.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find jsk_spot_startup)/config/navigation/move_base.yaml" command="load" />
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="map" to="$(arg map_topic)" />
+    <remap from="odom" to="$(arg odom_topic)" />
+  </node>
+</launch>

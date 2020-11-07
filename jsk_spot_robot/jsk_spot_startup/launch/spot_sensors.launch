@@ -1,0 +1,81 @@
+<launch>
+  <arg name="manager" default="camera_nodelet_manager" />
+  <arg name="target_frame" default="body" />
+  <arg name="min_height" default="-0.3" />
+  <arg name="max_height" default="-0.2" />
+
+  <!-- Nodelet manager -->
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        respawn="true" output="screen" />
+
+  <!-- Depth image to pointcloud xyz -->
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc_frontleft"
+        args="load depth_image_proc/point_cloud_xyz /$(arg manager)"
+        respawn="true" >
+    <remap from="image_rect" to="/spot/depth/frontleft/image" />
+    <remap from="camera_info" to="/spot/depth/frontleft/camera_info" />
+    <remap from="points" to="/spot/depth/frontleft/points" />
+  </node>
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc_frontright"
+        args="load depth_image_proc/point_cloud_xyz /$(arg manager)"
+        respawn="true" >
+    <remap from="image_rect" to="/spot/depth/frontright/image" />
+    <remap from="camera_info" to="/spot/depth/frontright/camera_info" />
+    <remap from="points" to="/spot/depth/frontright/points" />
+  </node>
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc_left"
+        args="load depth_image_proc/point_cloud_xyz /$(arg manager)"
+        respawn="true" >
+    <remap from="image_rect" to="/spot/depth/left/image" />
+    <remap from="camera_info" to="/spot/depth/left/camera_info" />
+    <remap from="points" to="/spot/depth/left/points" />
+  </node>
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc_right"
+        args="load depth_image_proc/point_cloud_xyz /$(arg manager)"
+        respawn="true" >
+    <remap from="image_rect" to="/spot/depth/right/image" />
+    <remap from="camera_info" to="/spot/depth/right/camera_info" />
+    <remap from="points" to="/spot/depth/right/points" />
+  </node>
+  <node pkg="nodelet" type="nodelet" name="depth_image_proc_back"
+        args="load depth_image_proc/point_cloud_xyz /$(arg manager)"
+        respawn="true" >
+    <remap from="image_rect" to="/spot/depth/back/image" />
+    <remap from="camera_info" to="/spot/depth/back/camera_info" />
+    <remap from="points" to="/spot/depth/back/points" />
+  </node>
+
+  <!-- Concatenate pointclouds -->
+  <!-- TODO: To save computing power,
+       we should convert each point cloud to laserscan and then combine them. -->
+  <node pkg="nodelet" type="nodelet" name="concatenate_pointcloud"
+        args="load pcl/PointCloudConcatenateDataSynchronizer /$(arg manager)"
+        respawn="true" >
+    <remap from="~output" to="/spot/depth/points" />
+    <rosparam subst_value="true">
+      approximate_sync: true
+      output_frame: $(arg target_frame)
+      input_topics:
+        - /spot/depth/frontleft/points
+        - /spot/depth/frontright/points
+        - /spot/depth/left/points
+        - /spot/depth/right/points
+        - /spot/depth/back/points
+    </rosparam>
+  </node>
+
+  <!-- Pointcloud xyz to laser scan -->
+  <node pkg="nodelet" type="nodelet" name="pointcloud_to_laserscan"
+        args="load pointcloud_to_laserscan/pointcloud_to_laserscan_nodelet /$(arg manager)"
+        respawn="true" >
+    <remap from="cloud_in" to="/spot/depth/points" />
+    <remap from="scan" to="/base_scan" />
+    <rosparam subst_value="true">
+      target_frame: $(arg target_frame)
+      min_height: $(arg min_height)
+      max_height: $(arg max_height)
+      angle_min: -3.14
+      angle_max: 3.14
+    </rosparam>
+  </node>
+</launch>

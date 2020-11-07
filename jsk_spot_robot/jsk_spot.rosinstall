@@ -1,0 +1,12 @@
+- git:
+    local-name: jsk_robot
+    uri: https://github.com/k-okada/jsk_robot.git
+    version: spot
+- git:
+    local-name: jsk-ros-pkg/jsk_demos
+    uri: https://github.com/knorth55/jsk_demos.git
+    version: fetch15
+- git:
+    local-name: spot-ros
+    uri: https://github.com/clearpathrobotics/spot_ros.git
+    version: master
