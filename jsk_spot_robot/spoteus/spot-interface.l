@@ -299,6 +299,12 @@
      (setq ret (send c :wait-for-result))
      (ros::ros-info "~A ~A" ret (send (send c :get-result) :message))
      ret))
+  (:speak (text &rest args &key (topic-name "sound_play") &allow-other-keys)
+    (send-super* :speak text :topic-name topic-name args))
+  (:speak-en (text &rest args &key (topic-name "sound_play") &allow-other-keys)
+    (send-super* :speak-en text :topic-name topic-name args))
+  (:speak-jp (text &rest args &key (topic-name "robotsound_jp") &allow-other-keys)
+    (send-super* :speak-jp text :topic-name topic-name args))
   )
 
 (defun spot-init (&optional (create-viewer))

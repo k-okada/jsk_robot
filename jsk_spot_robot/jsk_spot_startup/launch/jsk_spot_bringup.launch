@@ -1,4 +1,6 @@
 <launch>
+  <arg name="launch_sound_play" default="true" />
+  
     <!-- spot driver -->
     <include
         file="$(find jsk_spot_startup)/launch/driver.launch"
@@ -18,4 +20,29 @@
     <include
         file="$(find jsk_spot_teleop)/launch/teleop.launch"
         />
+
+    <!-- speak node -->
+    <!-- english speach node -->
+    <!-- disable sound_play in julius.launch and place it in fetch_bringup.launch -->
+    <!-- see: https://github.com/jsk-ros-pkg/jsk_robot/pull/1140 -->
+    <node name="sound_play" pkg="sound_play" type="soundplay_node.py"
+          respawn="true" if="$(arg launch_sound_play)" />
+
+    <!-- japanese speech node -->
+    <include file="$(find voice_text)/launch/voice_text.launch">
+      <arg name="launch_sound_play" value="$(arg launch_sound_play)" />
+      <arg name="sound_play_respawn" value="true" />
+    </include>
+
+    <!-- set fetch speak action server names -->
+    <!-- this parameter is for speech_to_text node in respeaker_ros -->
+    <!-- https://github.com/jsk-ros-pkg/jsk_3rdparty/pull/168 -->
+    <group ns="speech_to_text">
+      <rosparam>
+        tts_action_names:
+        - sound_play
+        - robotsound_jp
+      </rosparam>
+    </group>
+    
 </launch>
