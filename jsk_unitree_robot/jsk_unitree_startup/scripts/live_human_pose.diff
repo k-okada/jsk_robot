@@ -1,0 +1,3 @@
+171a172,173
+>  # add by k-okada 2022.4.7
+>  O0ii1ii1ii.publish("vision/human_pose", str([{ooO0O['keypoints'][i[0]]: (i[1]*II11iiii1Ii*O00oO,i[2]*OooO0*oo0OooOOo0) for i in filter(lambda i: i[1], I11i1i11i1I(OoOo,i,iIo00O)) } for i in range(oOO00oOO [ 0 ])]))
