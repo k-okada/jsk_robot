@@ -8,16 +8,22 @@ sleep 2
 source /opt/jsk/User/user_setup.bash
 
 eval echo "[jsk_startup] starting... " $toStartlog
-rosnode list $toStartlog
+
+# wait for roscore....
+while ! eval rosnode list 2$toStartlog; do sleep 2; done
+eval rosnode list $toStartlog
 
 if [ "$ROS_IP" == "192.168.123.161" ];then
-    (sleep 2; roslaunch --screen sound_play soundplay_node.launch sound_play:=robotsound) &
-    (sleep 2; roslaunch --screen jsk_unitree_startup rwt_app_chooser.launch) &
+    roslaunch --screen sound_play soundplay_node.launch sound_play:=robotsound &
+    roslaunch --screen jsk_unitree_startup rwt_app_chooser.launch &
 fi
 
 if [ "$ROS_IP" == "192.168.123.14" ];then
-    (sleep 5; roslaunch jsk_unitree_startup unitree_bringup.launch network:=ethernet) &
+    # wait for soundplay
+    while ! eval rostopic info /robotsound 2$toStartlog; do sleep 2; done
+    sleep 2 # wait for a while...
+    roslaunch jsk_unitree_startup unitree_bringup.launch network:=ethernet &
 fi
 
-(sleep 10; eval echo "[jsk_startup] done... " $toStartlog)
-(sleep 11; rosnode list $toStartlog)
+eval echo "[jsk_startup] done... " $toStartlog
+eval rosnode list $toStartlog

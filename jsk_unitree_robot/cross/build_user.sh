@@ -62,5 +62,6 @@ docker run -it --rm \
     echo 1000 && \
     [ ${UPDATE_SOURCE_ROOT} -eq 0 -o -z \"\$(cat user.repos)\" ] || PYTHONPATH= vcs import src < user.repos && \
     catkin build jsk_${TARGET_ROBOT}_startup ${TARGET_ROBOT}eus -s -vi \
+        --cmake-args -DCATKIN_ENABLE_TESTING=FALSE \
     " 2>&1 | tee ${TARGET_MACHINE}_build_user.log
 cp ${PWD}/user_setup.bash ${SOURCE_ROOT}/
