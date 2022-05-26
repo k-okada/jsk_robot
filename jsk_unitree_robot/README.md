@@ -647,3 +647,64 @@ Publishers:
 Subscribers: None
 
 ```
+
+## Tips
+
+### Cehck boot process
+
+#### 192.168.123.161
+
+Auto start services list
+
+```
+$ cat ~/Unitree/autostart/.startlist.sh
+updateDependencies
+ipconfig
+gencamparams
+camerarosnode
+03persontrack
+imageai
+jsk_startup
+faceLightServer
+slamDetector
+wsaudio
+faceLightMqtt
+```
+
+Monitor boot process
+
+```
+sshpass -p 123 ssh pi@192.168.123.161 tail -f Unitree/autostart/.startlog
+```
+
+#### 192.168.123.14
+
+Auto start services list
+
+```
+$ cat ~/Unitree/autostart/.startlist.sh
+updateDependencies
+ipconfig
+gencamparams
+camerarosnode
+03persontrack
+imageai
+jsk_startup
+faceLightServer
+slamDetector
+wsaudio
+faceLightMqtt
+```
+
+Monitor boot process
+
+```
+sshpass -p 123 ssh unitree@192.168.123.14 tail -f Unitree/autostart/.startlog
+```
+
+### Check roslaunch output
+
+```
+sshpass -p 123 ssh unitree@192.168.123.14 ls .ros/log/latest/
+sshpass -p 123 ssh unitree@192.168.123.14 tail -f .ros/log/latest/app_manager-5.log
+```
