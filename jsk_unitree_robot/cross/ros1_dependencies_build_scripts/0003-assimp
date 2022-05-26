@@ -1,0 +1,22 @@
+#!/bin/bash
+set -xeuf -o pipefail
+
+DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/assimp/debian/debian
+cd ${DEBIAN_DIR}/patches
+for patch_file in $(cat series); do
+    patch -N -d /home/user/ros1_dependencies_sources/src/assimp/assimp-4.1.0 -p1 < $patch_file
+done
+#
+mkdir -p /home/user/ros1_dependencies_sources/build/assimp
+cd /home/user/ros1_dependencies_sources/build/assimp
+cmake \
+  -DCMAKE_INSTALL_PREFIX=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_SHARED_LINKER_FLAGS="-Wl,--version-script=${DEBIAN_DIR}/libassimp4.ver" \
+  -DBUILD_ASSIMP_SAMPLES=OFF \
+  -DASSIMP_BUILD_TESTS=OFF \
+  -DBUILD_DOCS=OFF \
+  -DCMAKE_DEBUG_POSTFIX='' \
+  -DASSIMP_ENABLE_BOOST_WORKAROUND=OFF \
+  ../../src/assimp/assimp-4.1.0
+make -j4 install

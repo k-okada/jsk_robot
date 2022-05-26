@@ -1,0 +1,19 @@
+#!/bin/bash
+set -xeuf -o pipefail
+
+DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/snappy/debian/debian
+SOURCE_DIR=/home/user/ros1_dependencies_sources/src/snappy/snappy-1.1.7
+
+cd ${DEBIAN_DIR}/patches
+for patch_file in $(cat series); do
+    patch -N -d ${SOURCE_DIR} -p1 < $patch_file
+done
+
+mkdir -p /home/user/ros1_dependencies_sources/build/snappy
+cd /home/user/ros1_dependencies_sources/build/snappy
+cmake \
+  -DCMAKE_INSTALL_PREFIX=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_SHARED_LIBS=on \
+  ${SOURCE_DIR}
+make -j4 install

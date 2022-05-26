@@ -1,0 +1,52 @@
+repositories:
+  urdfdom-headers:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/u/urdfdom-headers/urdfdom-headers_1.0.0.orig.tar.gz
+  urdfdom-headers/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/u/urdfdom-headers/urdfdom-headers_1.0.0-1.debian.tar.xz
+  urdfdom:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/u/urdfdom/urdfdom_1.0.0.orig.tar.gz
+  urdfdom/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/u/urdfdom/urdfdom_1.0.0-2build2.debian.tar.xz
+  assimp:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/a/assimp/assimp_4.1.0~dfsg.orig.tar.gz
+  assimp/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/a/assimp/assimp_4.1.0~dfsg-3.debian.tar.xz
+  collada-dom:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/c/collada-dom/collada-dom_2.4.4+ds1.orig.tar.xz
+  collada-dom/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/c/collada-dom/collada-dom_2.4.4+ds1-2build3.debian.tar.xz
+  yaml-cpp:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/y/yaml-cpp/yaml-cpp_0.5.2.orig.tar.gz
+  yaml-cpp/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/y/yaml-cpp/yaml-cpp_0.5.2-4ubuntu1.debian.tar.xz
+  # gstreamer1.0:
+  #   type: tar
+  #   url: http://archive.ubuntu.com/ubuntu/pool/main/g/gstreamer1.0/gstreamer1.0_1.14.5.orig.tar.xz
+  # gstreamer1.0/debian:
+  #   type: tar
+  #   url: http://archive.ubuntu.com/ubuntu/pool/main/g/gstreamer1.0/gstreamer1.0_1.14.5-0ubuntu1~18.04.2.debian.tar.xz
+  snappy:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/main/s/snappy/snappy_1.1.7.orig.tar.gz
+  snappy/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/main/s/snappy/snappy_1.1.7-1.debian.tar.xz
+  opencv:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/o/opencv/opencv_3.2.0+dfsg.orig.tar.gz
+  opencv/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/o/opencv/opencv_3.2.0+dfsg-4ubuntu0.1.debian.tar.xz
+  python-sip:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/s/sip4/sip4_4.19.7+dfsg.orig.tar.gz

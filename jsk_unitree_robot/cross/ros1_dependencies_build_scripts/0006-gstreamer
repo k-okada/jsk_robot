@@ -1,0 +1,20 @@
+#!/bin/bash
+set -xeuf -o pipefail
+
+exit
+
+DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/gstreamer1.0/debian/debian
+cd ${DEBIAN_DIR}/patches
+for patch_file in $(cat series); do
+    patch -N -d /home/user/ros1_dependencies_sources/src/gstreamer1.0/gstreamer-1.14.5 -p1 < $patch_file
+done
+#
+mkdir -p /home/user/ros1_dependencies_sources/build/gstreamer
+cd /home/user/ros1_dependencies_sources/build/gstreamer
+/home/user/ros1_dependencies_sources/src/gstreamer1.0/gstreamer-1.14.5/configure \
+    --disable-failing-tests \
+    --disable-examples \
+    --enable-DEBUG \
+    --enable-debug \
+    --prefix=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies
+make -j4 install
