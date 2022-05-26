@@ -29,12 +29,6 @@ repositories:
   yaml-cpp/debian:
     type: tar
     url: http://archive.ubuntu.com/ubuntu/pool/universe/y/yaml-cpp/yaml-cpp_0.5.2-4ubuntu1.debian.tar.xz
-  # gstreamer1.0:
-  #   type: tar
-  #   url: http://archive.ubuntu.com/ubuntu/pool/main/g/gstreamer1.0/gstreamer1.0_1.14.5.orig.tar.xz
-  # gstreamer1.0/debian:
-  #   type: tar
-  #   url: http://archive.ubuntu.com/ubuntu/pool/main/g/gstreamer1.0/gstreamer1.0_1.14.5-0ubuntu1~18.04.2.debian.tar.xz
   snappy:
     type: tar
     url: http://archive.ubuntu.com/ubuntu/pool/main/s/snappy/snappy_1.1.7.orig.tar.gz
@@ -50,3 +44,9 @@ repositories:
   python-sip:
     type: tar
     url: http://archive.ubuntu.com/ubuntu/pool/universe/s/sip4/sip4_4.19.7+dfsg.orig.tar.gz
+  tinyxml:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/t/tinyxml/tinyxml_2.6.2.orig.tar.gz
+  tinyxml/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/t/tinyxml/tinyxml_2.6.2-4.debian.tar.xz
