@@ -68,7 +68,7 @@ function copy_data () {
     # check if we have jsk_startup in .startlist
     sshpass -p $PASS ssh -t ${user}@${hostname} "cat ~/Unitree/autostart/.startlist.sh"
     sshpass -p $PASS ssh -t ${user}@${hostname} "cat ~/Unitree/autostart/.startlist.sh | grep jsk_startup" ||
-        sshpass -p $PASS ssh -t ${user}@${hostname} "sed -i -E -e '/^sportMode|imageai/a jsk_startup' Unitree/autostart/.startlist.sh"
+        sshpass -p $PASS ssh -t ${user}@${hostname} "sed -i -E -e '/^utrack|imageai/a jsk_startup' Unitree/autostart/.startlist.sh"
 
     # check if we have /opt/jsk
     set -x
@@ -79,10 +79,20 @@ function copy_data () {
     if [[ "${TARGET_DIRECTORY}" == "User" ]]; then
         rsync --rsh="/usr/bin/sshpass -p $PASS ssh -o StrictHostKeyChecking=no -l ${user}" -avz --delete ../jsk_unitree_startup/autostart/ ${hostname}:Unitree/autostart/jsk_startup
         # https://stackoverflow.com/questions/23395363/make-patch-return-0-when-skipping-an-already-applied-patch
-        ### OUT="$(patch -p0 --backup --forward live_human_pose.py < publish_human_pose.diff)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false);
     fi
     set +x
 }
 
 copy_data pi 192.168.123.161
 copy_data unitree 192.168.123.14
+copy_data unitree 192.168.123.15
+if [[ "${TARGET_DIRECTORY}" == "User" ]]; then
+    # update live_human_pose.py to publish human pose via mqtt
+    # run ls, to execut with child process
+    sshpass -p 123 ssh -t unitree@192.168.123.15 bash -c 'ls; OUT="$(patch -p0 --backup --forward /home/unitree/Unitree/autostart/imageai/mLComSystemFrame/pyScripts/live_human_pose.py < /opt/jsk/User/src/jsk_robot/jsk_unitree_robot/jsk_unitree_startup/scripts/publish_human_pose.diff | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false);'
+fi
+
+set +x
+echo "==="
+echo "Congratulations! Please reset robot and enjoy!!"
+echo "==="

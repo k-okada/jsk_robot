@@ -1,20 +1,13 @@
 #!/bin/bash
-set -xeuf -o pipefail
+#set -xeuf -o pipefail
+set -xeu -o pipefail
 
-exit
-
-DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/gstreamer1.0/debian/debian
-cd ${DEBIAN_DIR}/patches
-for patch_file in $(cat series); do
-    patch -N -d /home/user/ros1_dependencies_sources/src/gstreamer1.0/gstreamer-1.14.5 -p1 < $patch_file
-done
-#
 mkdir -p /home/user/ros1_dependencies_sources/build/gstreamer
 cd /home/user/ros1_dependencies_sources/build/gstreamer
-/home/user/ros1_dependencies_sources/src/gstreamer1.0/gstreamer-1.14.5/configure \
-    --disable-failing-tests \
-    --disable-examples \
-    --enable-DEBUG \
-    --enable-debug \
-    --prefix=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies
-make -j4 install
+apt download gir1.2-gstreamer-1.0
+ls -al
+ar vx *.deb
+tar -xvf data.tar.xz
+mkdir -p /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/girepository-1.0/
+cp ./usr/lib/$(gcc -dumpmachine)/girepository-1.0/* /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/girepository-1.0/
+ls -al /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/girepository-1.0/

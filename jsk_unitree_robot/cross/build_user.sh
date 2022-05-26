@@ -31,7 +31,7 @@ fi
 set -x
 # copy jsk_robot direcotry to jsk_catkin_ws/src
 mkdir -p ${SOURCE_ROOT}/src/jsk_robot
-rsync -avzh --delete --exclude 'jsk_unitree_robot/cross*' ../../../jsk_robot ${SOURCE_ROOT}/src/
+rsync -avzh --delete --exclude 'jsk_unitree_robot/cross*' --exclude "go1.l" --exclude "go1-simple.l" ../../../jsk_robot ${SOURCE_ROOT}/src/
 [ ${UPDATE_SOURCE_ROOT} -eq 0 ] || vcs import ${SOURCE_ROOT}/src < repos/unitree.repos
 
 # run on docker
