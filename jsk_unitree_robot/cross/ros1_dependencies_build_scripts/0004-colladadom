@@ -2,10 +2,13 @@
 set -xeuf -o pipefail
 
 DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/collada-dom/debian/debian
+SOURCE_DIR=/home/user/ros1_dependencies_sources/src/collada-dom/collada-dom-2.4.4
+
 cd ${DEBIAN_DIR}/patches
 for patch_file in $(cat series); do
-    patch -N -d /home/user/ros1_dependencies_sources/src/collada-dom/collada-dom-2.4.4 -p1 < $patch_file
+    OUT="$(patch -p1 --forward --directory ${SOURCE_DIR} < ${patch_file} | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false)
 done
+
 #
 mkdir -p /home/user/ros1_dependencies_sources/build/collada-dom
 cd /home/user/ros1_dependencies_sources/build/collada-dom
@@ -22,5 +25,6 @@ cmake \
   -DOPT_BUILD_PACKAGES=OFF \
   -DOPT_BUILD_PACKAGE_DEFAULT=OFF \
   -DOPT_DOUBLE_PRECISION=ON \
-  ../../src/collada-dom/collada-dom-2.4.4
+  ${SOURCE_DIR}
+
 make -j4 install

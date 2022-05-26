@@ -6,7 +6,7 @@ SOURCE_DIR=/home/user/ros1_dependencies_sources/src/tinyxml/tinyxml
 
 cd ${DEBIAN_DIR}/patches
 for patch_file in $(cat series); do
-    patch -N -d ${SOURCE_DIR} -p1 < $patch_file || echo "OK"
+    OUT="$(patch -p1 --forward --directory ${SOURCE_DIR} < ${patch_file} | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false)
 done
 
 cd ${SOURCE_DIR}
@@ -28,6 +28,8 @@ rm -f tinyxml.pc
 cat ${DEBIAN_DIR}/tinyxml.pc.in | sed "s@/usr@/opt/jsk/${INSTALL_ROOT}/ros1_dependencies@" \
     | sed "s@\${DEB_HOST_MULTIARCH}@@" | sed "s@\${DEB_VERSION_UPSTREAM}@2.6.2@" | tee tinyxml.pc
 
+mkdir -p /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/include
+mkdir -p /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/pkgconfig/
 cp tinyxml.h                  /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/include
 cp libtinyxml.a libtinyxml.so /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/
 cp tinyxml.pc                 /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/pkgconfig/

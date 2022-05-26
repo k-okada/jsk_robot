@@ -36,9 +36,9 @@ docker run -it --rm \
   bash -c "\
     set -xeuf -o pipefail && \
     cd /home/user/ros1_dependencies_sources && \
-    vcs import --retry 3 --shallow src < ros1_dependencies.repos && \
+    vcs import --skip-existing --retry 3 --shallow src < ros1_dependencies.repos && \
     for script_file in \$(ls /home/user/ros1_dependencies_build_scripts/|sort); do
-      /home/user/ros1_dependencies_build_scripts/\$script_file
+      /home/user/ros1_dependencies_build_scripts/\$script_file || exit 1;
     done && \
     pip install -U --user pip && \
     export PKG_CONFIG_PATH=\"/opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/pkgconfig\" && \

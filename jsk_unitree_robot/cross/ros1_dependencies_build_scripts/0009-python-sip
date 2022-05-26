@@ -7,6 +7,7 @@ SOURCE_DIR=/home/user/ros1_dependencies_sources/src/python-sip/sip-4.19.7
 
 mkdir -p /home/user/ros1_dependencies_sources/build/python-sip
 cd /home/user/ros1_dependencies_sources/build/python-sip
+
 python \
     ${SOURCE_DIR}/configure.py \
     -d /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/python2.7/dist-packages \

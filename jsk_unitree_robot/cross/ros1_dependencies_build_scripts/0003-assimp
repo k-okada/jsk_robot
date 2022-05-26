@@ -2,13 +2,16 @@
 set -xeuf -o pipefail
 
 DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/assimp/debian/debian
+SOURCE_DIR=/home/user/ros1_dependencies_sources/src/assimp/assimp-4.1.0
+
 cd ${DEBIAN_DIR}/patches
 for patch_file in $(cat series); do
-    patch -N -d /home/user/ros1_dependencies_sources/src/assimp/assimp-4.1.0 -p1 < $patch_file
+    OUT="$(patch -p1 --forward --directory ${SOURCE_DIR} < ${patch_file} | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false)
 done
-#
+
 mkdir -p /home/user/ros1_dependencies_sources/build/assimp
 cd /home/user/ros1_dependencies_sources/build/assimp
+
 cmake \
   -DCMAKE_INSTALL_PREFIX=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies \
   -DCMAKE_BUILD_TYPE=Release \
@@ -18,5 +21,6 @@ cmake \
   -DBUILD_DOCS=OFF \
   -DCMAKE_DEBUG_POSTFIX='' \
   -DASSIMP_ENABLE_BOOST_WORKAROUND=OFF \
-  ../../src/assimp/assimp-4.1.0
+  ${SOURCE_DIR}
+
 make -j4 install

@@ -6,11 +6,12 @@ SOURCE_DIR=/home/user/ros1_dependencies_sources/src/opencv/opencv-3.2.0+dfsg
 
 cd ${DEBIAN_DIR}/patches
 for patch_file in $(cat series); do
-    patch -N -d ${SOURCE_DIR} -p1 < $patch_file
+    OUT="$(patch -p1 --forward --directory ${SOURCE_DIR} < ${patch_file} | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false)
 done
 
 mkdir -p /home/user/ros1_dependencies_sources/build/opencv
 cd /home/user/ros1_dependencies_sources/build/opencv
+
 cmake \
   -DCMAKE_INSTALL_PREFIX=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies \
   -DCMAKE_BUILD_TYPE=Release \
@@ -46,4 +47,5 @@ cmake \
   -DBUILD_opencv_java=OFF \
   -DWITH_OPENEXR=OFF \
   ${SOURCE_DIR}
+
 make -j4 install
