@@ -2,13 +2,13 @@
 catkin-tools
 #   ##
 # rosbridge_server
-autobahn==17.10.1  # python-autobahn_17.10.1+dfsg1-2_all.deb
-tornado==4.5.3     # python-tornado_4.5.3-1ubuntu0.2_arm64.deb
-twisted==17.9.0    # python-twisted_17.9.0-2ubuntu0.3_all.deb
+# autobahn==17.10.1  # python-autobahn_17.10.1+dfsg1-2_all.deb
+# tornado==4.5.3     # python-tornado_4.5.3-1ubuntu0.2_arm64.deb
+# twisted==17.9.0    # python-twisted_17.9.0-2ubuntu0.3_all.deb
 
 # rosbridge_library
-future==0.15.2    # python-future_0.15.2-4ubuntu2_all.deb
-pymongo==3.6.1    # python-bson_3.6.1+dfsg1-1_arm64.deb
+# future==0.15.2    # python-future_0.15.2-4ubuntu2_all.deb
+# pymongo==3.6.1    # python-bson_3.6.1+dfsg1-1_arm64.deb
 
 # ros-melodic-pcl-ros -> libpcl-dev -> libvtk6-dev -> python-vtk6 -> python-autobahn, python-mpi4py, python-six, python-twisted, python-zope.interface
 # python-mpi4py_2.0.0-3_arm64.deb

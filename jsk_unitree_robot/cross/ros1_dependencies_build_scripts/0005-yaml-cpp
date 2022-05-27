@@ -2,7 +2,7 @@
 set -xeuf -o pipefail
 
 DEBIAN_DIR=/home/user/ros1_dependencies_sources/src/yaml-cpp/debian/debian
-SOURCE_DIR=/home/user/ros1_dependencies_sources/src/yaml-cpp/yaml-cpp-release-0.5.2 
+SOURCE_DIR=/home/user/ros1_dependencies_sources/src/yaml-cpp/yaml-cpp-release-0.5.2
 
 cd ${DEBIAN_DIR}/patches
 for patch_file in $(cat series); do

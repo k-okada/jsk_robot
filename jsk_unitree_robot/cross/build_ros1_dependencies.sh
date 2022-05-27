@@ -41,6 +41,7 @@ docker run -it --rm \
       /home/user/ros1_dependencies_build_scripts/\$script_file || exit 1;
     done && \
     pip install -U --user pip && \
+    export PYTHONPATH=\"/opt/jsk/System/ros1_dependencies/lib/python2.7/site-packages\" && \
     export PKG_CONFIG_PATH=\"/opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/pkgconfig\" && \
     ~/.local/bin/pip install --prefix=/opt/jsk/${INSTALL_ROOT}/Python -r /home/user/ros1_dependencies_sources/go1_requirements.txt \
     " 2>&1 | tee ${TARGET_MACHINE}_build_ros1_dependencies.log
