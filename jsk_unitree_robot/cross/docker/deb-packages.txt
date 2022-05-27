@@ -1289,5 +1289,5 @@ zenity
 zlib1g
 zlib1g-dev
 # liblcm in only installed in 14/161
-liblcm-bin
+liblcms2-2
 liblcm-dev

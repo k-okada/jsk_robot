@@ -27,7 +27,7 @@ ssh pi@192.168.123.161 'source /opt/ros/melodic/setup.bash; rospack list' |tee 1
 ssh unitree@192.168.123.13 'source /opt/ros/melodic/setup.bash; rospack list' |tee 13-list.txt
 ssh unitree@192.168.123.14 'source /opt/ros/melodic/setup.bash; rospack list' |tee 14-list.txt
 ssh unitree@192.168.123.15 'source /opt/ros/melodic/setup.bash; rospack list' |tee 15-list.txt
-cat 13-list.txt 14-list.txt 161-list.txt  | sort | uniq -c | sort | egrep "^.*3" | sed 's/^\s*3\s*\(\S*\)\s.*$/ros-melodic-\1/' | sed 's/_/-/g' | xargs | tee ros-packages.txt
+cat 13-list.txt 14-list.txt 15-list.txt  | sort | uniq -c | sort | egrep "^.*3" | sed 's/^\s*3\s*\(\S*\)\s.*$/ros-melodic-\1/' | sed 's/_/-/g' | xargs | tee ros-packages.txt
 ```
 
 Create List of Debian packages to be installed

@@ -20,6 +20,8 @@ while getopts "p:d:" o; do
     esac
 done
 shift $((OPTIND-1))
+[ $# -gt 0 ] && usage  # exit if unknown argument found
+
 
 TARGET_MACHINE="${TARGET_MACHINE:-arm64v8}"
 
