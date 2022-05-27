@@ -21,7 +21,7 @@ for file in ${SRC_FILES}; do
     ${CXX} ${CXXFLAGS} -c $file
 done
 ar rc libtinyxml.a ${OBJ_FILES}
-${CXX} -shared -Wl,-soname,libtinyxml.so. -o libtinyxml.so ${OBJ_FILES}
+${CXX} -shared -Wl,-soname,libtinyxml.so.2.6.2 -o libtinyxml.so.2.6.2 ${OBJ_FILES}
 
 # install
 rm -f tinyxml.pc
@@ -31,5 +31,6 @@ cat ${DEBIAN_DIR}/tinyxml.pc.in | sed "s@/usr@/opt/jsk/${INSTALL_ROOT}/ros1_depe
 mkdir -p /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/include
 mkdir -p /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/pkgconfig/
 cp tinyxml.h                  /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/include
-cp libtinyxml.a libtinyxml.so /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/
+cp libtinyxml.a libtinyxml.so.2.6.2 /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/
 cp tinyxml.pc                 /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/pkgconfig/
+(cd /opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/; ln -sf libtinyxml.so.2.6.2 libtinyxml.so)

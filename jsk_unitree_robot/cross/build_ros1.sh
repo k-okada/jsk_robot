@@ -56,7 +56,7 @@ docker run -it --rm \
     [ ${UPDATE_SOURCE_ROOT} -eq 0 ] || ROS_PACKAGE_PATH=src:\$ROS_PACKAGE_PATH rosinstall_generator ${EUSCOLLADA_DEPENDS} ${ROSEUS_DEPENDS} ${ROSEUS_MONGO_DEPENDS} ${ROSEUS_SMACH_DEPENDS} ${JSK_ROBOT_STARTUP_DEPENDS} ${DIAGNOSTIC_AGGREGATOR} pr2eus --verbose --deps --rosdistro melodic --exclude RPP --depend-type buildtool buildtool_export build run | tee unitree_ros1_system.repos && \
     [ ${UPDATE_SOURCE_ROOT} -eq 0 ] || vcs import --force --retry 3 --shallow src < unitree_ros1_system.repos && \
     OUT=\"\$(patch -p1 --forward --directory src/pr2_mechanism < pr2_mechanism-346.diff | tee /dev/tty)\" || echo \"\${OUT}\" | grep \"Skipping patch\" -q || (echo \"\$OUT\" && false) && \
-    catkin_make_isolated --install --install-space /opt/jsk/${INSTALL_ROOT}/ros1_inst -DCMAKE_BUILD_TYPE=Release --from-pkg pr2_mechanism_model \
+    catkin_make_isolated --install --install-space /opt/jsk/${INSTALL_ROOT}/ros1_inst -DCMAKE_BUILD_TYPE=Release \
         -DCATKIN_ENABLE_TESTING=FALSE \
         -DEUSLISP_WITHOUT_DISPLAY=TRUE -DDISABLE_DOCUMENTATION=1 \
     " 2>&1 | tee ${TARGET_MACHINE}_build_ros1.log
