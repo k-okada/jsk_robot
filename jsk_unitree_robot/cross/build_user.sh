@@ -52,9 +52,8 @@ docker run -it --rm \
     set -xeuf -o pipefail && \
     cd /opt/jsk/User && \
     [ ${UPDATE_SOURCE_ROOT} -eq 0 ] || ROS_PACKAGE_PATH=src:\${ROS_PACKAGE_PATH} /home/user/rosinstall_generator_unreleased.py jsk_${TARGET_ROBOT}_startup ${TARGET_ROBOT}eus --rosdistro melodic --exclude RPP --exclude mongodb_store | tee user.repos && \
-    echo 1000 && \
     [ ${UPDATE_SOURCE_ROOT} -eq 0 -o -z \"\$(cat user.repos)\" ] || PYTHONPATH= vcs import src < user.repos && \
     catkin build jsk_${TARGET_ROBOT}_startup ${TARGET_ROBOT}eus -s -vi \
         --cmake-args -DCATKIN_ENABLE_TESTING=FALSE \
     " 2>&1 | tee ${TARGET_MACHINE}_build_user.log
-cp ${PWD}/user_setup.bash ${SOURCE_ROOT}/
+cp ${PWD}/startup_scripts/user_setup.bash ${SOURCE_ROOT}/
