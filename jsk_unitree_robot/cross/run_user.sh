@@ -7,6 +7,7 @@ SOURCE_ROOT=${TARGET_MACHINE}_User
 
 set -xeuf -o pipefail
 
+#  -v ${PWD}/${TARGET_MACHINE}_ws_system:/home/user/${TARGET_MACHINE}_ws_system:rw \
 # run on docker
 docker run -it --rm \
   -u $(id -u $USER) \
@@ -14,7 +15,7 @@ docker run -it --rm \
   -v ${HOST_INSTALL_ROOT}/ros1_dependencies:/opt/jsk/${INSTALL_ROOT}/ros1_dependencies:ro \
   -v ${HOST_INSTALL_ROOT}/Python:/opt/jsk/${INSTALL_ROOT}/Python:ro \
   -v ${HOST_INSTALL_ROOT}/ros1_inst:/opt/jsk/${INSTALL_ROOT}/ros1_inst:ro \
-  -v ${HOST_INSTALL_ROOT}/startup_scripts:/opt/jsk/${INSTALL_ROOT}/startup_scripts:ro \
+  -v ${HOST_INSTALL_ROOT}/ros1_dependencies_setup.bash:/opt/jsk/${INSTALL_ROOT}/ros1_dependencies_setup.bash:ro \
   -v ${HOST_INSTALL_ROOT}/system_setup.bash:/opt/jsk/${INSTALL_ROOT}/system_setup.bash:ro \
   -v ${PWD}/${SOURCE_ROOT}:/opt/jsk/User:rw \
   ros1-unitree:${TARGET_MACHINE} \

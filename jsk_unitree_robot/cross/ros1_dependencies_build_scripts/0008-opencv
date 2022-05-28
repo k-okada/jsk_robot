@@ -46,6 +46,8 @@ cmake \
   -DWITH_OPENCL=OFF \
   -DBUILD_opencv_java=OFF \
   -DWITH_OPENEXR=OFF \
+  -DPYTHON2_PACKAGES_PATH=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies/lib/python2.7/site-packages \
+  -DOPENCV_CONFIG_INSTALL_PATH=lib/cmake/OpenCV \
   ${SOURCE_DIR}
 
 make -j4 install
