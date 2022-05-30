@@ -708,3 +708,9 @@ sshpass -p 123 ssh unitree@192.168.123.14 tail -f Unitree/autostart/.startlog
 sshpass -p 123 ssh unitree@192.168.123.14 ls .ros/log/latest/
 sshpass -p 123 ssh unitree@192.168.123.14 tail -f .ros/log/latest/app_manager-5.log
 ```
+
+### Check AI Camera's output
+
+```
+mosquitto_sub -h 192.168.123.161 -t 'vision/human_pose' -d
+```
