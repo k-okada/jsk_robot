@@ -2,12 +2,10 @@ ros-melodic-actionlib-msgs
 ros-melodic-actionlib
 ros-melodic-bondcpp
 ros-melodic-bond
-ros-melodic-bondpy
 ros-melodic-catkin
 ros-melodic-class-loader
 ros-melodic-cmake-modules
 ros-melodic-cpp-common
-ros-melodic-diagnostic-msgs
 ros-melodic-dynamic-reconfigure
 ros-melodic-gencpp
 ros-melodic-geneus
@@ -27,7 +25,6 @@ ros-melodic-pcl-conversions
 ros-melodic-pcl-msgs
 ros-melodic-pcl-ros
 ros-melodic-pluginlib
-ros-melodic-rosbag-migration-rule
 ros-melodic-rosbag
 ros-melodic-rosbag-storage
 ros-melodic-rosbash
@@ -63,11 +60,9 @@ ros-melodic-rostopic
 ros-melodic-rosunit
 ros-melodic-roswtf
 ros-melodic-sensor-msgs
-ros-melodic-shape-msgs
 ros-melodic-smclib
 ros-melodic-std-msgs
 ros-melodic-std-srvs
-ros-melodic-stereo-msgs
 ros-melodic-tf2-eigen
 ros-melodic-tf2-msgs
 ros-melodic-tf2
@@ -75,6 +70,5 @@ ros-melodic-tf2-py
 ros-melodic-tf2-ros
 ros-melodic-tf
 ros-melodic-topic-tools
-ros-melodic-trajectory-msgs
 ros-melodic-visualization-msgs
 ros-melodic-xmlrpcpp

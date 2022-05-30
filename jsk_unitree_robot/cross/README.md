@@ -36,7 +36,7 @@ ssh pi@192.168.123.161 'dpkg --get-selections' | tee 161-select.txt
 ssh unitree@192.168.123.13 'dpkg --get-selections' | tee 13-select.txt
 ssh unitree@192.168.123.14 'dpkg --get-selections' | tee 14-select.txt
 ssh unitree@192.168.123.15 'dpkg --get-selections' | tee 15-select.txt
-cat 13-select.txt 14-select.txt 161-select.txt | sort | uniq -c | egrep "^\s+3\s" | sed 's/\s\s*/ /g' | cut -f 3 -d\  | sed 's/:arm64$//' | tee deb-packages.txt
+cat 161-list.txt 13-list.txt 14-list.txt 15-list.txt  | sort | uniq -c | sort | egrep "^.*4" | sed 's/^\s*4\s*\(\S*\)\s.*$/ros-melodic-\1/' | sed 's/_/-/g' | tee ros-packages.txt
 ```
 
 Finally! Type the following, go grab a coffee and after a while you'll have an entire base ROS distro built for Go1 robot.
