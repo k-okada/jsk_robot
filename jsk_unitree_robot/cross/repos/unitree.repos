@@ -16,4 +16,4 @@ repositories:
     # because we uses unitree_legged_sdk without message update,
     # we do not include https://github.com/unitreerobotics/unitree_ros_to_real/pull/27 in
     #   k-okada/unitree_ros_to_real:develop
-    version:  develop
+    version: develop

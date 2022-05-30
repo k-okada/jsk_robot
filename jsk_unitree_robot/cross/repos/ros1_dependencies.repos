@@ -128,6 +128,12 @@ repositories:
   python-pymongo/debian:
     type: tar
     url: http://archive.ubuntu.com/ubuntu/pool/main/p/pymongo/pymongo_3.6.1+dfsg1-1.debian.tar.xz
+  python-websocket:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/w/websocket-client/websocket-client_0.44.0.orig.tar.gz
+  python-websocket/debian:
+    type: tar
+    url: http://archive.ubuntu.com/ubuntu/pool/universe/w/websocket-client/websocket-client_0.44.0-0ubuntu2.debian.tar.xz
   liblcm:
     type: tar
     url: http://archive.ubuntu.com/ubuntu/pool/universe/l/lcm/lcm_1.3.1+repack1.orig.tar.gz
