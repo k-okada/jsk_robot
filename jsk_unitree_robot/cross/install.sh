@@ -98,7 +98,8 @@ function copy_data () {
 
 copy_data pi 192.168.123.161
 copy_data unitree 192.168.123.14
-copy_data unitree 192.168.123.15
+#copy_data unitree 192.168.123.15 : Pro : No Space for auto start
+
 if [[ "${TARGET_DIRECTORY}" == "User" ]]; then
     # update live_human_pose.py to publish human pose via mqtt
     # run ls, to execut with child process
