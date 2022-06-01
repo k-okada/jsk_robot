@@ -1,6 +1,10 @@
 #   ##
 catkin-tools
 #   ##
+
+# paho is installed under ~/.local/lib/python2.7/site-packages nano2 of Pro, but not instaled on Edu(?)
+paho-mqtt==1.6.1
+
 # rosbridge_server
 # autobahn==17.10.1  # python-autobahn_17.10.1+dfsg1-2_all.deb
 # tornado==4.5.3     # python-tornado_4.5.3-1ubuntu0.2_arm64.deb
