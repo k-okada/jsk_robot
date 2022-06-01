@@ -101,9 +101,13 @@ copy_data unitree 192.168.123.14
 #copy_data unitree 192.168.123.15 : Pro : No Space for auto start
 
 if [[ "${TARGET_DIRECTORY}" == "User" ]]; then
+    # clear old known_hosts
+    ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "192.168.123.15" || echo "OK"
+    sshpass -p $PASS ssh -o StrictHostKeyChecking=no unitree@192.168.123.15 exit
     # update live_human_pose.py to publish human pose via mqtt
     # run ls, to execut with child process
-    sshpass -p 123 ssh -t unitree@192.168.123.15 bash -c 'ls; OUT="$(patch -p0 --backup --forward /home/unitree/Unitree/autostart/imageai/mLComSystemFrame/pyScripts/live_human_pose.py < /opt/jsk/User/src/jsk_robot/jsk_unitree_robot/jsk_unitree_startup/scripts/publish_human_pose.diff | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false);'
+    sshpass -p 123 scp ${TARGET_MACHINE}_${TARGET_DIRECTORY}/src/jsk_robot/jsk_unitree_robot/jsk_unitree_startup/scripts/publish_human_pose.diff unitree@192.168.123.15:/tmp/publish_human_pose.diff
+    sshpass -p 123 ssh -t unitree@192.168.123.15 bash -c 'ls; OUT="$(patch -p0 --backup --forward /home/unitree/Unitree/autostart/imageai/mLComSystemFrame/pyScripts/live_human_pose.py < /tmp/publish_human_pose.diff | tee /dev/tty)" || echo "${OUT}" | grep "Skipping patch" -q || (echo "$OUT" && false);'
 fi
 
 set +x
