@@ -16,9 +16,14 @@ eval rosnode list $toStartlog
 if [ "$ROS_IP" == "192.168.123.161" ];then
     roslaunch --screen sound_play soundplay_node.launch sound_play:=robotsound &
     roslaunch --screen jsk_unitree_startup rwt_app_chooser.launch &
+    roslaunch --screen jsk_unitree_startup rosserial_node.launch &
 fi
 
 if [ "$ROS_IP" == "192.168.123.14" ];then
+    # 192.168.123.14 is force updated within install.sh for Go1 Air
+    if [ "$ROS_IP" == "192.168.123.13" ];then
+       DISPLAY=:0.0 gnome-terminal -- bash -c "export GST_PLUGIN_PATH=/home/unitree/Unitree/autostart/imageai/mLComSystemFrame/ThirdParty/webSinkPipe/build; cd /home/unitree/Unitree/autostart/imageai/mLComSystemFrame/pyScripts; PYTHONPATH= python3 live_human_pose.py; exec bash"
+    fi
     # wait for soundplay
     while ! eval rostopic info /robotsound 2$toStartlog; do sleep 2; done
     sleep 2 # wait for a while...
