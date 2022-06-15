@@ -2,6 +2,8 @@
   <arg name="launch_joy_node" default="true" />
   <arg name="joy_dev" default="/dev/input/js0" />
   <arg name="joy_topic_raw" default="/joy_head/joy_raw" />
+  <arg name="joy_topic_raw_input" default="/joy_head/joy_raw_input" />
+  <arg name="joy_topic_pseudo" default="/joy_head/joy_pseudo" doc="Joy without input." />
   <arg name="joy_topic_complemented" default="/joy_head/joy_complemented" />
   <arg name="cmd_vel_topic" default="joy_head/cmd_vel" />
   <arg name="deadzone" default="0.3" />
@@ -22,6 +24,24 @@
       <remap from="joy" to="$(arg joy_topic_raw)" />
     </node>
   </group>
+
+  <!-- input mux: ($(arg joy_topic_raw) & $(arg joy_topic_pseudo)) -> / -->
+  <node name="input_joy_mux"
+        pkg="topic_tools" type="mux"
+        respawn="true"
+	      args="$(arg joy_topic_raw_input) $(arg joy_topic_pseudo) $(arg joy_topic_raw)">
+    <remap from="mux" to="input_joy_mux" />
+  </node>
+
+  <node name="input_joy_selector"
+        pkg="jsk_robot_startup" type="mux_selector.py"
+	      respawn="true"
+	      args="$(arg joy_topic_raw) 'm.buttons[5]==1' $(arg joy_topic_raw) $(arg joy_topic_raw) 'm.buttons[4]==0' $(arg joy_topic_pseudo)">
+    <remap from="mux" to="input_vel_mux" />
+    <param name="default_select" value="$(arg joy_topic_pseudo)" />
+    <param name="wait" value="true" />
+  </node>
+
   <!-- node to set enable button -->
   <!-- <node pkg="topic_tools" name="enabele_button" type="transform" -->
   <!--       args="$(arg joy_topic_raw) $(arg joy_topic_complemented) -->
