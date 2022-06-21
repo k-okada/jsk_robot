@@ -11,7 +11,7 @@
 
   <!-- custom hardware for rosserial/joy node -->
   <group if="$(arg launch_serial_node)" >
-    <node name="serial_node" type="serial_node.py"
+    <node name="lead_serial_node" type="serial_node.py"
           pkg="rosserial_python"
           output="screen">
       <remap from="joy" to="/joy_head/joy_raw" />
