@@ -27,7 +27,7 @@ if [ "$ROS_IP" == "192.168.123.14" ];then
     fi
     # Go1 Pro runs rosserial_node on nano2
     if [ "$ROS_IP" == "192.168.123.14" ];then
-        roslaunch --screen jsk_unitree_startup rosserial_node.launch &
+        roslaunch --screen jsk_unitree_startup lead_teleop.launch &
     fi
     # wait for soundplay
     while ! eval rostopic info /robotsound 2$toStartlog; do sleep 2; done
