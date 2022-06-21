@@ -14,7 +14,7 @@
     <node name="lead_serial_node" type="serial_node.py"
           pkg="rosserial_python"
           output="screen">
-      <remap from="joy" to="/joy_head/joy_raw" />
+      <remap from="joy" to="/joy_head/joy_raw_input" />
       <param name="port" value="/dev/ttyACM0" />
       <param name="deadzone" value="$(arg deadzone)" />
       <param name="debounce_period" value="$(arg debounce_period)" />
