@@ -1,9 +1,10 @@
-#!/usr/bin/env roseus                                                                                                                                                 
-(ros::load-ros-manifest "roseus")                                                                   
-(ros::roseus "unitree-happy")
+#!/usr/bin/env roseus
+
+(ros::load-ros-manifest "roseus")
+(ros::roseus "unitree-astonished")
 ;;(load "package://unitreeeus/unitree-interface.l")
 
-(defun happy-pose-1(&optional (time 3000))
+(defun as-pose-1(&optional (time 3000))
   (progn (send *go1* :angle-vector (send *ri* :state :potentio-vector))
 	 (send *go1* :body-pose '(0.4 -0.4 -0.2))
 	 (send *ri* :body-pose '(0.4 -0.4 -0.2))
@@ -12,7 +13,7 @@
 (defun happy-pose-2(&optional (time 3000))
   (progn (send *go1* :angle-vector (send *ri* :state :potentio-vector))
 	 (send *go1* :body-pose '(-0.4 -0.4 0.2))
-	 (send *ri* :body-pose '(-0.4 -0.4 0.2))
+	 (send *ri* :body-pose '(-0.4 -0.4 0,2))
 	 ))
 
 (defun reset-pose(&optional (time 3000))
@@ -45,5 +46,5 @@
   (unix:usleep (* 1000 1000))
   (reset-pose 800)
   (unix:usleep (* 1000 800))
- 
+
   )
