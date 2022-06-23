@@ -5,6 +5,20 @@
 ##############
 sleep 2
 
+
+# Change which one to launch rosserial depending on the individual of unitree.
+# pongo (Edu)
+# sparky (Go1 Pro)
+# pachi (Go1 Pro)
+# bolt (Go1 Pro)
+# lucky (Go1 Air)
+# rolly (Go1 Air)
+if [ echo 'sparky' 'lucky' 'rolly' | xargs -n 1 | grep -E "^`hostname`$" ]; then
+   ROSSERIAL_ON_NANO2=false
+else
+   ROSSERIAL_ON_NANO2=true
+fi
+
 source /opt/jsk/User/user_setup.bash
 
 eval echo "[jsk_startup] starting... " $toStartlog
@@ -16,7 +30,7 @@ eval rosnode list $toStartlog
 if [ "$ROS_IP" == "192.168.123.161" ];then
     roslaunch --screen sound_play soundplay_node.launch sound_play:=robotsound &
     roslaunch --screen jsk_unitree_startup rwt_app_chooser.launch &
-    roslaunch --screen jsk_unitree_startup rosserial_node.launch &
+    ! $ROSSERIAL_ON_NANO2 && roslaunch --screen jsk_unitree_startup rosserial_node.launch &
     roslaunch --screen respeaker_ros sample_respeaker.launch language:=ja-JP publish_tf:=false launch_soundplay:=false &
 fi
 
@@ -28,7 +42,7 @@ if [ "$ROS_IP" == "192.168.123.14" ];then
     fi
     # Go1 Pro runs rosserial_node on nano2
     if [ "$ROS_IP" == "192.168.123.14" ];then
-        roslaunch --screen jsk_unitree_startup rosserial_node.launch &
+       $ROSSERIAL_ON_NANO2 && roslaunch --screen jsk_unitree_startup rosserial_node.launch &
     fi
     # wait for soundplay
     while ! eval rostopic info /robotsound 2$toStartlog; do sleep 2; done
