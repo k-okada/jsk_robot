@@ -94,6 +94,7 @@
                         (send *ri* :speak "はい")
                         (setq *continue* nil)))))
 
+
 (defun start-func (args)
   (let ()
     (setq *last-tm* (ros::time-now))
@@ -193,6 +194,18 @@
 ;; create robot interface
 (unless (boundp '*ri*) (pepper-init))
 (objects (list *pepper*))
+
+;; signal-hook
+(defun signal-hook (sig code)
+  (if (boundp '*ri*)
+      (progn
+	(ros::ros-info "take a reset pose")
+	(send *ri* :angle-vector (send *pepper* :reset-pose))
+	)))
+
+(unix:signal 2 'signal-hook)
+(unix:signal 9 'signal-hook)
+(unix:signal 15 'signal-hook)
 
 ;;
 (defun image_cb (msg)
