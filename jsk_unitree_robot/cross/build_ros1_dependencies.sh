@@ -28,6 +28,7 @@ cp repos/go1_requirements.txt ${SOURCE_ROOT}/go1_requirements.txt
 docker run -it --rm \
   -u $(id -u $USER) \
   -e INSTALL_ROOT=${INSTALL_ROOT} \
+  -e JSK_UNITREE_COMPILE_PARALLEL=${JSK_UNITREE_COMPILE_PARALLEL} \
   -v ${PWD}/ros1_dependencies_build_scripts:/home/user/ros1_dependencies_build_scripts:ro \
   -v ${PWD}/${SOURCE_ROOT}:/home/user/ros1_dependencies_sources:rw \
   -v ${HOST_INSTALL_ROOT}/ros1_dependencies:/opt/jsk//${INSTALL_ROOT}/ros1_dependencies:rw \
