@@ -117,16 +117,17 @@ function copy_data () {
         sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find respeaker_ros)/config/60-respeaker.rules /etc/udev/rules.d/60-respeaker.rules"
         #
         sshpass -p $PASS ssh -t ${user}@${hostname} "ls -al /etc/udev/rules.d/; echo $PASS | sudo -S systemctl restart udev"
-    fi
 
-    # enable Internet with USB LTE module
-    if [[ "${hostname}" == "192.168.123.161" ]]; then
-        sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find jsk_unitree_startup)/config/dhcpcd.conf /etc/dhcpcd.conf"
-        sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find jsk_unitree_startup)/config/sysctl.conf /etc/sysctl.conf"
-        sshpass -p $PASS ssh -t ${user}@${hostname} "echo $PASS | sudo -S systemctl restart dhcpcd"
+        # enable Internet with USB LTE module
+        if [[ "${hostname}" == "192.168.123.161" ]]; then
+            sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find jsk_unitree_startup)/config/dhcpcd.conf /etc/dhcpcd.conf"
+            sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find jsk_unitree_startup)/config/sysctl.conf /etc/sysctl.conf"
+            sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find jsk_unitree_startup)/config/iptables.ipv4.nat /etc/iptables.ipv4.nat"
+            sshpass -p $PASS ssh -t ${user}@${hostname} "echo $PASS | sudo -S systemctl restart dhcpcd"
 
-        # enable wlan0
-        sshpass -p $PASS ssh -t ${user}@${hostname} "sed -i 's/sudo ifconfig wlan0 down/# sudo ifconfig wlan0 down/g' /home/pi/Unitree/autostart/configNetwork/configNetwork.sh"
+            # enable wlan0
+            sshpass -p $PASS ssh -t ${user}@${hostname} "sed -i 's/sudo ifconfig wlan0 down/# sudo ifconfig wlan0 down/g' /home/pi/Unitree/autostart/configNetwork/configNetwork.sh"
+        fi
     fi
 
     set +x
