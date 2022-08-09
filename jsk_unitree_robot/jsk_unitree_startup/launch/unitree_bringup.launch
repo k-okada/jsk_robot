@@ -42,4 +42,9 @@
   <!-- let people to know unitree is bringup -->
   <node pkg="jsk_unitree_startup" type="wakeup.l"
         name="wakeup" output="log" />
+
+  <!-- send email when unitree is bringup -->
+  <node pkg="jsk_unitree_startup" type="launch_email.py"
+        name="launch_email" output="log" />
+
 </launch>

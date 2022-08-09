@@ -13,6 +13,7 @@
   <run_depend>unitree_legged_real</run_depend>
   <run_depend>rwt_app_chooser</run_depend>
   <run_depend>app_manager</run_depend>
+  <run_depend>python3-bs4</run_depend>
   <run_depend>rosserial_python</run_depend>
   <run_depend>teleop_twist_joy</run_depend>
   <run_depend>respeaker_ros</run_depend>
