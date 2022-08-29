@@ -2,39 +2,62 @@
 
 (load "package://roseus_smach/src/state-machine-ros.l")
 
-(ros::roseus-add-msgs "jsk_recognition_msgs")
+(require :base64 "lib/llib/base64.l")
 
+(ros::roseus-add-msgs "jsk_recognition_msgs")
+(ros::roseus-add-msgs "sensor_msgs")
+
+(setq *img* nil)
+(setq joy-msg nil)
+(setq last-time-input-joy (ros::time))
+(setq walk-end-duration 120)
 (setq find-person-msg (instance jsk_recognition_msgs::PeoplePoseArray :init))
 (defun find-person-cb (msg)
   (setq find-person-msg msg))
 
+(defun joy-cb (msg)
+  (setq joy-msg msg)
+  (setq last-time-input-joy (send msg :header :stamp)))
+
+(defun image-cb (msg)
+  (setq *img* (copy-object msg)))
+
 (defun start-func (args)
   (let ()
-    (set-alist 'description "Start Walking" args)
+    (while (null joy-msg)
+      (ros::ros-info "start  : wait lead input.")
+      (ros::spin-once)
+      (ros::sleep))
+    (set-alist 'description "散歩を始めるよ" args)
+    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
     :started))
+
+
+(defun end-func (args)
+  (let ()
+    (set-alist 'description "散歩を終えるよ" args)
+    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
+    :finished))
 
 (defun walk-func (args)
   (let ((last-time-seen-person 9999))
     (while (> last-time-seen-person 5)
+      (when (> (send (ros::time- (ros::time-now) last-time-input-joy) :to-sec) walk-end-duration)
+        (return-from walk-func :finished))
       (when (> (length (send find-person-msg :poses)) 0)
         (setq last-time-seen-person (send (ros::time- (ros::time-now) (send find-person-msg :header :stamp)) :to-sec)))
       (ros::ros-info "walk  : detect person ~A sec ago" last-time-seen-person)
       (ros::spin-once)
       (ros::sleep))
+    (set-alist 'description "歩いているよ" args)
+    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
     ;; set description and goes to next state
-    (set-alist 'description "Find Person" args)
     :find-person))
 
 (defun find-person-func (args)
-  (let ((last-time-seen-person 0))
-    (while (< last-time-seen-person 5)
-      (when (> (length (send find-person-msg :poses)) 0)
-        (setq last-time-seen-person (send (ros::time- (ros::time-now) (send find-person-msg :header :stamp)) :to-sec)))
-      (ros::ros-info "person: detect person ~A sec ago" last-time-seen-person)
-      (ros::spin-once)
-      (ros::sleep))
-    ; set description and goes to next state
-    (set-alist 'description "Start Walking" args)
+  (let ()
+    (set-alist 'description "散歩中に人を見つけたよ" args)
+    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
     :walk))
 
 (defun lead-teleop-sm ()
@@ -44,20 +67,29 @@
            '((:start :started :walk)
              (:walk :find-person :find-person)
              (:walk :finished :end)
-             (:find-person :walk :walk))
+             (:find-person :walk :walk)
+             (:end :finished :finish))
            '((:start 'start-func)
-             (:end '(lambda (&rest args) :finished))
              (:walk 'walk-func) ;; function maps
-             (:find-person 'find-person-func))
+             (:find-person 'find-person-func)
+             (:end 'end-func))
            '(:start)      ;; initial
-           '(:end)       ;; goal
+           '(:finish)       ;; goal
            ))
     (send sm :arg-keys 'description)
     sm))
 
 (ros::roseus "lead-teleop-smach")
 (ros::rate 1)
+(setq last-time-input-joy (ros::time-now))
 (ros::subscribe "/people_pose" jsk_recognition_msgs::PeoplePoseArray #'find-person-cb)
-;; state machine
-(exec-state-machine (lead-teleop-sm))
+(ros::subscribe "/joy_head/joy_raw" sensor_msgs::Joy #'joy-cb)
+(ros::subscribe "/front_camera/output/compressed" sensor_msgs::CompressedImage #'image-cb)
+(do-until-key
+  ;; state machine
+  (exec-state-machine (lead-teleop-sm)
+                      `((description . ,(format nil "~A" "Unitree　お散歩中です"))
+                        (image . "")))
+  (setq joy-msg nil)
+  (setq last-time-input-joy (ros::time)))
 (ros::exit)
