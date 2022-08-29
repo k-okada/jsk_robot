@@ -17,7 +17,12 @@ if [ "$ROS_IP" == "192.168.123.161" ];then
     roslaunch --screen sound_play soundplay_node.launch sound_play:=robotsound &
     roslaunch --screen jsk_unitree_startup rwt_app_chooser.launch &
     roslaunch --screen jsk_unitree_startup rosserial_node.launch &
+    roslaunch --screen jsk_unitree_startup get_location.launch &
     roslaunch --screen respeaker_ros sample_respeaker.launch language:=ja-JP publish_tf:=false launch_soundplay:=false &
+fi
+
+if [ "$ROS_IP" == "192.168.123.13" ];then
+    roslaunch jsk_unitree_startup camera_image_publisher.launch &
 fi
 
 if [ "$ROS_IP" == "192.168.123.14" ];then
@@ -30,6 +35,7 @@ if [ "$ROS_IP" == "192.168.123.14" ];then
     while ! eval rostopic info /robotsound 2$toStartlog; do sleep 2; done
     sleep 2 # wait for a while...
     roslaunch jsk_unitree_startup unitree_bringup.launch network:=ethernet &
+    roslaunch jsk_unitree_startup google_chat_ros.launch &
 fi
 
 eval echo "[jsk_startup] done... " $toStartlog
