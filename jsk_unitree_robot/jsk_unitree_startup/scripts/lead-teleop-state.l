@@ -88,7 +88,7 @@
 (do-until-key
   ;; state machine
   (exec-state-machine (lead-teleop-sm)
-                      `((description . ,(format nil "~A" "Unitree　お散歩中です"))
+                      `((description . ,(format nil "~A" "Unitree　お散歩しました"))
                         (image . "")))
   (setq joy-msg nil)
   (setq last-time-input-joy (ros::time)))
