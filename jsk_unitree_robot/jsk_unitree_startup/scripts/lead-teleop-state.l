@@ -29,14 +29,14 @@
       (ros::spin-once)
       (ros::sleep))
     (set-alist 'description "散歩を始めるよ" args)
-    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
+    (when *img* (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args))
     :started))
 
 
 (defun end-func (args)
   (let ()
     (set-alist 'description "散歩を終えるよ" args)
-    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
+    (when *img* (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args))
     :finished))
 
 (defun walk-func (args)
@@ -50,14 +50,14 @@
       (ros::spin-once)
       (ros::sleep))
     (set-alist 'description "歩いているよ" args)
-    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
+    (when *img* (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args))
     ;; set description and goes to next state
     :find-person))
 
 (defun find-person-func (args)
   (let ()
     (set-alist 'description "散歩中に人を見つけたよ" args)
-    (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args)
+    (when *img* (set-alist 'image (remove #\newline (base64encode (send *img* :serialize))) args))
     :walk))
 
 (defun lead-teleop-sm ()
