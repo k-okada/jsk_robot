@@ -33,4 +33,8 @@
   <node pkg="jsk_unitree_startup" type="lead-teleop-state.l"
         name="lead_teleop_state" />
 
+  <node name="walk_notifier"
+        pkg="jsk_unitree_startup" type="walk-notifier.l"
+        output="log" />
+
 </launch>

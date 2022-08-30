@@ -6,7 +6,7 @@ The unitree launches various apps via [app_manager](https://github.com/pr2/app_m
 
 You can launch the app from the browser by accessing this [url](http://192.168.123.161:8000/rwt_app_chooser/).
 
-### Walk Notifier
+### Walk Notifier (this is internally called from Lead Teleop)
 
 Send an email with the location of the walk and a camera image of the walk.
 
