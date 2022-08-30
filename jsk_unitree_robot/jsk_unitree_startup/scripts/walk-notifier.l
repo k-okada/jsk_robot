@@ -50,6 +50,7 @@
     (when (> (send (ros::time- (ros::time-now) last-time-input-joy) :to-sec) walk-end-duration)
       (return-from walk-func :finished))
     (set-alist 'description (format nil "Unitree お散歩中です") args)
+    (set-alist 'image "" args)
     :next))
 
 (defun walk-func (args)
