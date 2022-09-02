@@ -14,6 +14,9 @@ while ! eval rosnode list 2$toStartlog; do sleep 2; done
 eval rosnode list $toStartlog
 
 if [ "$ROS_IP" == "192.168.123.161" ];then
+    # Reload iptables.
+    sudo iptables-restore < /etc/iptables.ipv4.nat
+
     roslaunch --screen sound_play soundplay_node.launch sound_play:=robotsound &
     roslaunch --screen jsk_unitree_startup rwt_app_chooser.launch &
     roslaunch --screen jsk_unitree_startup rosserial_node.launch &
