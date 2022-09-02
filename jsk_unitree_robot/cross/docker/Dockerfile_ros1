@@ -21,7 +21,7 @@ RUN apt-get update -y
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 COPY deb-packages.txt .
 COPY ros-packages.txt .
-RUN apt install -y --no-install-recommends $(cat deb-packages.txt | grep -v ^#)
+RUN apt install -y --no-install-recommends --allow-downgrades $(cat deb-packages.txt | grep -v ^#)
 RUN apt install -y --no-install-recommends $(cat ros-packages.txt | grep -v ^#)
 #
 # Package required for cross environment
