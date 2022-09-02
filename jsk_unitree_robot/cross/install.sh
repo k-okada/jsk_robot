@@ -127,6 +127,10 @@ function copy_data () {
 
             # enable wlan0
             sshpass -p $PASS ssh -t ${user}@${hostname} "sed -i 's/sudo ifconfig wlan0 down/# sudo ifconfig wlan0 down/g' /home/pi/Unitree/autostart/configNetwork/configNetwork.sh"
+        else # for jetson
+            # install /etc/network/interfaces
+            sshpass -p $PASS ssh -t ${user}@${hostname} "source /opt/jsk/User/user_setup.bash; echo $PASS | sudo -S cp -f \$(rospack find jsk_unitree_startup)/config/interfaces /etc/network/interfaces"
+            sshpass -p $PASS ssh -t ${user}@${hostname} "sed -i 's/192.168.123.14/${hostname}/g' /etc/network/interfaces; cat /etc/network/interfaces"
         fi
     fi
 
