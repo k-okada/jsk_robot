@@ -8,15 +8,14 @@ cd ${SOURCE_DIR}
 INSTALL_DIR=/opt/jsk/${INSTALL_ROOT}/ros1_dependencies
 
 make makefiles \
-     install_root=${INSTALL_DIR} \
-     command_directory=${INSTALL_DIR}/sbin \
-     config_directory=${INSTALL_DIR}/etc/postfix \
-     daemon_directory=${INSTALL_DIR}/libexec/postfix \
-     mailq_path=${INSTALL_DIR}/bin/mailq \
-     manpage_directory=${INSTALL_DIR}/man \
-     meta_directory=${INSTALL_DIR}/etc/postfix \
-     newaliases_path=${INSTALL_DIR}/bin/newaliases \
-     sendmail_path=${INSTALL_DIR}/sbin/sendmail \
+     command_directory=/bin \
+     config_directory=/etc/postfix \
+     daemon_directory=/libexec/postfix \
+     mailq_path=/bin/mailq \
+     manpage_directory=/man \
+     meta_directory=/etc/postfix \
+     newaliases_path=/bin/newaliases \
+     sendmail_path=/bin/sendmail \
      CCARGS="-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -DUSE_TLS -DNO_DB \
              -I${INSTALL_DIR}/include/sasl \
              -I${INSTALL_DIR}/include/openssl" \
