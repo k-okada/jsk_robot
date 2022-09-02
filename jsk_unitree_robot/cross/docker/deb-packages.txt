@@ -827,7 +827,7 @@ libsuperlu-dev
 libswresample-dev
 libswscale-dev
 libsys-hostname-long-perl
-libsystemd0
+libsystemd0=237-3ubuntu10.53
 libsz2
 libtag1v5
 libtag1v5-vanilla
@@ -852,7 +852,7 @@ libtsan0
 libtwolame0
 libu2f-udev
 libuchardet0
-libudev1
+libudev1=237-3ubuntu10.53
 libudisks2-0
 libunique-1.0-0
 libunistring2
