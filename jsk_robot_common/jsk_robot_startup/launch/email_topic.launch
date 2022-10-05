@@ -1,0 +1,7 @@
+<launch>
+  <!-- send email, twitter with smach -->
+  <node name="server_name" pkg="jsk_robot_startup" type="smach_to_mail.py" output="screen">
+    <param name="sender_address" command='bash -c "echo `hostname`@jsk.imi.i.u-tokyo.ac.jp"' />
+    <param name="receiver_address" command='bash -c "echo `hostname`@jsk.imi.i.u-tokyo.ac.jp"' />
+  </node>
+</launch>
