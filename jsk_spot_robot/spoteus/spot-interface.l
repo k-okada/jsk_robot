@@ -97,7 +97,7 @@
    (list
     (list
      (cons :controller-action "spot/arm_controller/follow_joint_trajectory")
-     (cons :controller-state  "spot/arm_controller/follow_joint_trajectory/state")
+     (cons :controller-state  "spot/arm_controller/follow_joint_trajectory/status")
      (cons :action-type control_msgs::FollowJointTrajectoryAction)
      (cons :joint-names (send-all (send robot :arm :joint-list) :name))
      )))
