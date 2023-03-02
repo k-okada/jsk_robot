@@ -10,8 +10,8 @@
 (spot-init)
 (if (eq (send *ri* :state :power-state-shore-power-state) 'on-shore-power)
     (send *ri* :undock))
-;; (send *ri* :set-impedance-param :linear-stiffness #f(250 250 250) :rotational-stiffness #f(30 30 30) :linear-damping #f(1.5 1.5 1.5) :rotational-damping #f(0.5 0.5 0.5))
-;; (send *ri* :set-impedance-param :linear-stiffness #f(250 25 25) :rotational-stiffness #f(30 5 5) :linear-damping #f(1.5 1.5 1.5) :rotational-damping #f(0.5 0.5 0.5))
+;; (send *ri* :move-arm-impedance-command (send (send *spot* :arm :endcoords) :copy-worldcoords) :linear-stiffness #f(250 250 250) :rotational-stiffness #f(30 30 30) :linear-damping #f(1.5 1.5 1.5) :rotational-damping #f(0.5 0.5 0.5))
+;; (send *ri* :move-arm-impedance-command (send (send *spot* :arm :endcoords) :copy-worldcoords) :linear-stiffness #f(250 25 25) :rotational-stiffness #f(30 5 5) :linear-damping #f(1.5 1.5 1.5) :rotational-damping #f(0.5 0.5 0.5))
 
 (setq *default-av* #f(0.0 -130.0 120.0 0.0 10.0 0.0))
 
@@ -67,7 +67,9 @@
   (send *ri* :angle-vector (send *spot* :angle-vector) 1000 :default-controller)
   (send *ri* :stop-grasp)
   (send *ri* :wait-interpolation)
-  (send *ri* :set-impedance-param
+  (send *spot* :angle-vector (send *ri* :state :potentio-vector))
+  (send *ri* :move-arm-impedance-command
+        (send (send *spot* :arm :endcoords) :copy-worldcoords)
 	:linear-stiffness #f(250 25 75)  ;; z(up) y(side) x(front)
 	:rotational-stiffness #f(3 30 30)
 	:linear-damping #f(1.5 1.0 1.0)
@@ -279,7 +281,7 @@
   (setq *continue* nil))
 (unix:signal unix::sigint 'ros::roseus-sigint-handler)
 
-;; send start-func (set-impedance) when R Stick button is pressed
+;; send start-func (move-arm-impedance-command) when R Stick button is pressed
 (ros::subscribe "/joy_dualsense" sensor_msgs::Joy
                #'(lambda (msg)
                    (if (and (> (length (send msg :buttons)) 11)
