@@ -123,6 +123,7 @@
                                  (rotational-stiffness #f(60 60 60))
                                  (linear-damping #f(2.5 2.5 2.5))
                                  (rotational-damping #f(1.0 1.0 1.0)))
+    "Move spot hand to target-coords with impedance control"
     (let (goal)
       (labels
         ((v2v (v) (instance geometry_msgs::Vector3 :init :x (elt v 0) :y (elt v 1) :z (elt v 2))))
