@@ -18,4 +18,9 @@
         </rosparam>
     </node>
 
+    <include file="$(find jsk_perception)/sample/sample_insta360_air.launch">
+        <arg name="width" value="2176"/>
+        <arg name="height" value="1088"/>
+        <arg name="panorama_resolution_mode" value="low"/>
+    </include>
 </launch>
