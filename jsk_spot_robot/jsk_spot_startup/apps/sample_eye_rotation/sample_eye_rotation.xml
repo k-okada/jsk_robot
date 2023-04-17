@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="jsk_spot_startup" type="sample-eye-rotation.l" name="sample_eye_rotation"/>
+</launch>
