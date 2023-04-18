@@ -6,6 +6,7 @@
         <rosparam subst_value="true">
             port: $(arg port_righteye)
             baud: 57600
+            mode_right: true
         </rosparam>
     </node>
 
@@ -13,6 +14,7 @@
         <rosparam subst_value="true">
             port: $(arg port_lefteye)
             baud: 57600
+            mode_right: false
         </rosparam>
     </node>
 
