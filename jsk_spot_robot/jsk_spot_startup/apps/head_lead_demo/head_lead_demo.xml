@@ -4,8 +4,10 @@
   </include>
   <!--include file="$(find jsk_spot_startup)/launch/include/lifelog.launch" >
   </include-->
+  <!--
   <include file="$(find jsk_spot_startup)/launch/include/interaction.launch" >
   </include>
+  -->
   <include file="$(find jsk_spot_startup)/launch/include/perception.launch" >
     <!--arg name="start_aws_detect_faces" value="true" /-->
     <!--arg name="start_aws_auto_checkin_app" value="true" /-->
