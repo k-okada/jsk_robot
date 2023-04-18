@@ -25,4 +25,5 @@
        (send *left-eye-target* :y (sin (/ (* 2 *pi* index) 10)))
        (ros::publish *right-eye-topic* *right-eye-target*)
        (ros::publish *left-eye-topic* *left-eye-target*)
+       (ros::info "publish")
        )
