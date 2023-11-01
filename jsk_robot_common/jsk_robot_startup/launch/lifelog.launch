@@ -20,14 +20,25 @@
   <arg name="logger_save_dialogflow" default="false" />
   <arg name="logger_save_app" default="false" />
   <arg name="logger_map_frame" default="odom" />
+  <arg name="logger_save_speech" default="false" />
+  <arg name="logger_save_google_chat" default="false" />
 
   <arg name="image" default="usb_cam/image_raw" />
 
+  <arg name="launch_mongodb" default="false" />
+  <arg name="launch_common_logger" default="false" />
+
+  <arg name="use_aws_auto_checkin_trigger" default="false" />
+  <arg name="use_aws_detect_faces_trigger" default="false" />
+
+  <arg name="manager" default="mongodb_record_nodelet_manager" />
+
   <param name="robot/database" value="jsk_robot_lifelog"/>
+
 
   <!-- logging database -->
   <param name="mongodb_replicate_on_write" value="true" /> <!-- need to set True to query from extra serveres, otherwise it only query from local server -->
-  <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch">
+  <include file="$(find jsk_robot_startup)/lifelog/mongodb.launch" if="$(arg launch_mongodb)">
     <arg name="use_daemon" value="true"/>
     <arg name="port" value="27017" />
     <arg name="repl_set_mode" value="false" />
@@ -44,7 +55,7 @@
     </node>
   </group>
 
-  <include file="$(find jsk_robot_startup)/lifelog/common_logger.launch">
+  <include file="$(find jsk_robot_startup)/lifelog/common_logger.launch" if="$(arg launch_common_logger)">
     <arg name="save_rgb" value="$(arg logger_save_rgb)" />
     <arg name="save_depth" value="$(arg logger_save_depth)" />
     <arg name="save_tf" value="$(arg logger_save_tf)" />
@@ -56,11 +67,13 @@
     <arg name="save_faces" value="$(arg logger_save_faces)" />
     <arg name="save_dialogflow" value="$(arg logger_save_dialogflow)" />
     <arg name="save_app" value="$(arg logger_save_app)" />
+    <arg name="save_speech" value="$(arg logger_save_speech)" />
+    <arg name="save_google_chat" value="$(arg logger_save_google_chat)" />
 
     <arg name="enable_monitor" value="false" />
     <arg name="log_rate" value="1.0" />
     <arg name="launch_manager" value="true" />
-    <arg name="manager" value="mongodb_record_nodelet_manager" />
+    <arg name="manager" value="$(arg manager)" />
     <arg name="map_frame_id" value="$(arg logger_map_frame)" />
     <arg name="approximate_sync" value="true"/>
   </include>
@@ -80,10 +93,10 @@
         args="--wait-for-start $(arg image)/output/compressed /publish_trigger_mongodb_event std_msgs/Header
               'std_msgs.msg.Header(stamp=m.header.stamp, frame_id=m._connection_header[&quot;callerid&quot;])' --import std_msgs" />
 
-  <node pkg="topic_tools" type="transform" name="publish_trigger_mongodb_event_aws_auto_checkin"
+  <node pkg="topic_tools" type="transform" name="publish_trigger_mongodb_event_aws_auto_checkin" if="$(arg use_aws_auto_checkin_trigger)"
         args="--wait-for-start /aws_auto_checkin_app/output/class /publish_trigger_mongodb_event std_msgs/Header
               'std_msgs.msg.Header(stamp=m.header.stamp, frame_id=m._connection_header[&quot;callerid&quot;])' --import std_msgs" />
-  <node pkg="topic_tools" type="transform" name="publish_trigger_mongodb_event_aws_detect_faces"
+  <node pkg="topic_tools" type="transform" name="publish_trigger_mongodb_event_aws_detect_faces" if="$(arg use_aws_detect_faces_trigger)"
         args="--wait-for-start /aws_detect_faces/attributes /publish_trigger_mongodb_event std_msgs/Header
               'std_msgs.msg.Header(stamp=m.header.stamp, frame_id=m._connection_header[&quot;callerid&quot;])' --import std_msgs" />
   <node pkg="topic_tools" type="transform" name="publish_trigger_mongodb_event_dialogflow_client"
@@ -99,7 +112,7 @@
   <!-- republish compressed/throttled image data only when /publish_trigger_mongodb_event is published -->
   <node name="camera_throttle_nodelet"
         pkg="nodelet" type="nodelet"
-        args="load jsk_topic_tools/SynchronizedThrottle mongodb_record_nodelet_manager" >
+        args="load jsk_topic_tools/SynchronizedThrottle $(arg manager)" >
     <rosparam subst_value="true">
       approximate_sync: true
       topics:
@@ -113,7 +126,7 @@
     <include file="$(find jsk_robot_startup)/lifelog/lifelog_rgb_image.launch" >
       <arg name="node_name" value="hand_color_logger" />
       <arg name="image" value="$(arg image)/compressed/throttled" />
-      <arg name="manager" value="mongodb_record_nodelet_manager" />
+      <arg name="manager" value="$(arg manager)" />
     </include>
   </group>
 
