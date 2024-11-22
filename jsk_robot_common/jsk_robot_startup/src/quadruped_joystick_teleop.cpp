@@ -10,8 +10,22 @@ class TeleopManager
 public:
     void init(ros::NodeHandle& nh)
     {
+        ros::NodeHandle private_nh("~");
         ros::param::param<int>("~button_estop_hard", button_estop_hard_, -1);
-        ros::param::param<int>("~button_estop_gentle", button_estop_gentle_, -1);
+
+        bool is_param_get = ros::param::param<int>(
+            "~button_estop_gentle", button_estop_gentle_, -1);
+        if (is_param_get)
+        {
+            button_estop_gentle_list_.push_back(button_estop_gentle_);
+        }
+        else
+        {
+            std::vector<int> initial_vec (1, -1);
+            bool param_get = ros::param::param<std::vector<int>>(
+                "~button_estop_gentle", button_estop_gentle_list_, initial_vec);
+        }
+
         ros::param::param<int>("~button_power_off", button_power_off_, -1);
         ros::param::param<int>("~button_power_on", button_power_on_, -1);
         ros::param::param<int>("~button_self_right", button_self_right_, -1);
@@ -106,27 +120,39 @@ public:
         }
 
         // estop_gentle
-        if ( button_estop_gentle_ >= 0
-                and button_estop_gentle_ < msg->buttons.size()
-                and button_estop_gentle_ < num_buttons_ ) {
-            if ( msg->buttons[button_estop_gentle_] == 1 ) {
-                if ( not pressed_[button_estop_gentle_] ) {
-                    this->say("estop gentle calling");
-                    if ( client_estop_gentle_.call(srv) && srv.response.success ) {
-                        ROS_INFO_STREAM("Service " << client_estop_gentle_.getService() << " succeeded.");
-                    } else {
-                        ROS_ERROR_STREAM("Service " << client_estop_gentle_.getService() << " failed. (" << srv.response.message << ")");
+        int estop_gentle_cnt = 0;
+        int estop_gentle_toggle_cnt = 0;
+        for (int i=0; i < button_estop_gentle_list_.size(); i++)
+        {
+            int button_estop_gentle = button_estop_gentle_list_[i];
+            if ( button_estop_gentle >= 0
+                    and button_estop_gentle < msg->buttons.size()
+                    and button_estop_gentle < num_buttons_ ) {
+                if ( msg->buttons[button_estop_gentle] == 1 ) {
+                    estop_gentle_cnt += 1;
+                    if ( !pressed_[button_estop_gentle] )
+                    {
+                        estop_gentle_toggle_cnt += 1;
                     }
-                    pressed_[button_estop_gentle_] = true;
-                }
-            } else {
-                if ( pressed_[button_estop_gentle_] ) {
-                    pressed_[button_estop_gentle_] = false;
+                    pressed_[button_estop_gentle] = true;
+                } else {
+                    pressed_[button_estop_gentle] = false;
                 }
             }
-        } else {
-            ROS_DEBUG_STREAM("Button " << client_estop_gentle_.getService() << " is disabled.");
+            else
+            {
+                ROS_DEBUG_STREAM("Button " << client_estop_gentle_.getService() << " is disabled.");
+            }
         }
+        if ( estop_gentle_cnt == button_estop_gentle_list_.size() && estop_gentle_toggle_cnt > 0) {
+            this->say("E stop gentle calling");
+            if ( client_estop_gentle_.call(srv) && srv.response.success ) {
+                ROS_INFO_STREAM("Service " << client_estop_gentle_.getService() << " succeeded.");
+            } else {
+                ROS_ERROR_STREAM("Service " << client_estop_gentle_.getService() << " failed. (" << srv.response.message << ")");
+            }
+        }
+
 
         // power_off
         if ( button_power_off_ >= 0
@@ -412,6 +438,7 @@ public:
 private:
     int button_estop_hard_;
     int button_estop_gentle_;
+    std::vector<int> button_estop_gentle_list_;
     int button_power_off_;
     int button_power_on_;
     int button_self_right_;

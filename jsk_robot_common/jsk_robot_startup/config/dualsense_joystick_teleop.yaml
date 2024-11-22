@@ -1,5 +1,7 @@
 button_estop_hard: -1
-button_estop_gentle: 5
+button_estop_gentle:
+  - 5
+  - 7
 button_power_off: 12
 button_power_on: 13
 button_self_right: 0
