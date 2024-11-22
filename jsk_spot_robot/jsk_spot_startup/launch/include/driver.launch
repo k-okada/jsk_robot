@@ -26,6 +26,13 @@
     <remap from="tf" to="/tf"/>
   </node>
 
+  <node
+    pkg="tf"
+    type="static_transform_publisher"
+    name="insta360_link_publisher"
+    args="-0.3 0 0.4 0 0 0 base_link insta360_link 100"
+  />
+
   <node name="cmd_vel_smoother" pkg="cmd_vel_smoother" type="cmd_vel_smoother">
     <remap from="input" to="spot/cmd_vel_unsmoothed" />
     <remap from="output" to="spot/cmd_vel" />

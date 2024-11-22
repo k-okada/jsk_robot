@@ -87,3 +87,7 @@
 - git:
     local-name: ublox
     uri: https://github.com/KumarRobotics/ublox.git
+# Panoram image recognition need coral_usb, which is not release as apt package.
+- git:
+    local-name: jsk-ros-pkg/coral_usb_ros
+    uri: https://github.com/jsk-ros-pkg/coral_usb_ros.git
