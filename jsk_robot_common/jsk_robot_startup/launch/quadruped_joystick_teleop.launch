@@ -14,6 +14,8 @@
   <arg name="tuck_service" default="tuck" />
   <arg name="untuck_service" default="untuck" />
 
+  <arg name="publish_cmd_vel_from_quadruped_joystick_teleop" default="false" />
+
   <group if="$(arg launch_joy_node)" >
     <node
         pkg="joy"
@@ -30,19 +32,28 @@
     </node>
   </group>
 
-  <node
-      pkg="teleop_twist_joy"
-      type="teleop_node"
-      name="teleop_twist_joy_$(arg pad_type)"
-      >
-    <remap from="joy" to="$(arg joy_topic)" />
-    <remap from="cmd_vel" to="$(arg cmd_vel_topic)" />
+  <group unless="$(arg publish_cmd_vel_from_quadruped_joystick_teleop)" >
+    <node
+	pkg="teleop_twist_joy"
+	type="teleop_node"
+	name="teleop_twist_joy_$(arg pad_type)"
+	>
+      <remap from="joy" to="$(arg joy_topic)" />
+      <remap from="cmd_vel" to="$(arg cmd_vel_topic)" />
 
+      <rosparam
+          command="load"
+          file="$(arg teleop_twist_joy_param_file)"
+          />
+    </node>
+  </group>
+  <group ns="$(arg joy_name_space)/joystick_teleop_$(arg pad_type)"
+	 if="$(arg publish_cmd_vel_from_quadruped_joystick_teleop)" >
     <rosparam
         command="load"
         file="$(arg teleop_twist_joy_param_file)"
         />
-  </node>
+  </group>
 
   <node
       pkg="jsk_robot_startup"
@@ -60,5 +71,11 @@
           command="load"
           file="$(arg joystick_teleop_param_file)"
           />
+
+      <!-- setting for publish_cmd_vel_from_quadruped_joystick_teleop -->
+      <rosparam subst_value="true">
+        publish_cmd_vel: $(arg publish_cmd_vel_from_quadruped_joystick_teleop)
+      </rosparam>
+      <remap from="cmd_vel" to="/$(arg cmd_vel_topic)" />
   </node>
 </launch>
