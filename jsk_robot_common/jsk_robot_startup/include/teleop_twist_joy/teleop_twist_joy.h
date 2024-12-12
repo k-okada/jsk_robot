@@ -38,7 +38,7 @@ class TeleopTwistJoy
 public:
   TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param);
 
-private:
+protected:
   struct Impl;
   Impl* pimpl_;
 };

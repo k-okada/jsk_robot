@@ -44,7 +44,7 @@ struct TeleopTwistJoy::Impl
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::string& which_map);
 
-  ros::Subscriber joy_sub;
+  //ros::Subscriber joy_sub;
   ros::Publisher cmd_vel_pub;
 
   int enable_button;
@@ -69,7 +69,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   pimpl_ = new Impl;
 
   pimpl_->cmd_vel_pub = nh->advertise<geometry_msgs::Twist>("cmd_vel", 1, true);
-  pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
+  // disable joy subscribe within TeleopTwistJoy, we want to use them from our main loop;
+  //pimpl_->joy_sub = nh->subscribe<sensor_msgs::Joy>("joy", 1, &TeleopTwistJoy::Impl::joyCallback, pimpl_);
 
   nh_param->param<int>("enable_button", pimpl_->enable_button, 0);
   nh_param->param<int>("enable_turbo_button", pimpl_->enable_turbo_button, -1);
@@ -124,6 +125,8 @@ TeleopTwistJoy::TeleopTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param)
   pimpl_->sent_disable_msg = false;
 }
 
+
+
 double getVal(const sensor_msgs::Joy::ConstPtr& joy_msg, const std::map<std::string, int>& axis_map,
               const std::map<std::string, double>& scale_map, const std::string& fieldname)
 {
@@ -150,12 +153,14 @@ void TeleopTwistJoy::Impl::sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_m
   cmd_vel_msg.angular.y = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "pitch");
   cmd_vel_msg.angular.x = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "roll");
 
-  cmd_vel_pub.publish(cmd_vel_msg);
+  // store command message for main loop
+  //cmd_vel_pub.publish(cmd_vel_msg);
   sent_disable_msg = false;
 }
 
 void TeleopTwistJoy::Impl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg)
 {
+  ROS_INFO("teleop cb");
   if (enable_turbo_button >= 0 &&
       joy_msg->buttons.size() > enable_turbo_button &&
       joy_msg->buttons[enable_turbo_button])
