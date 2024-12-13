@@ -523,7 +523,9 @@ public:
         }
 
 	// TwistTeleop
-	joy_teleop_->joyCallback(msg);
+	if ( publish_cmd_vel_ ) {
+	  joy_teleop_->joyCallback(msg);
+	}
     }
 
   bool isPublishCmdVel() {
