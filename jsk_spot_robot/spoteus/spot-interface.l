@@ -54,12 +54,12 @@
 
 (defclass spot-interface
   :super robot-move-base-interface
-  :slots (trajectory-cmd-action pick-object-in-image-client pick-object-in-image-feedback-msg)
+  :slots (trajectory-cmd-action pick-object-in-image-client pick-object-in-image-feedback-msg arm-impedance-command-action)
   )
 
 (defmethod spot-interface
   (:init
-   (&rest args &key (trajectory-cmd-action-name "/spot/trajectory") &allow-other-keys)
+   (&rest args &key (trajectory-cmd-action-name "/spot/trajectory") (arm-impedance-cmd-action-name "/spot/arm_impedance_command") &allow-other-keys)
    (prog1
        (send-super* :init :robot spot-robot :base-frame-id "base_link" :odom-topic "/odom_combined" :base-controller-action-name nil args)
      ;; check if spot_ros/driver.launch started
@@ -80,6 +80,9 @@
      (ros::subscribe "/spot/status/feedback" spot_msgs::Feedback #'send self :spot-feedback-callback :groupname groupname)
      (setq trajectory-cmd-action (instance ros::simple-action-client :init
                                         trajectory-cmd-action-name spot_msgs::TrajectoryAction
+                                        :groupname groupname))
+     (setq arm-impedance-command-action (instance ros::simple-action-client :init
+                                        arm-impedance-cmd-action-name spot_msgs::ArmImpedanceCommandAction
                                         :groupname groupname))
      (setq pick-object-in-image-client (instance ros::simple-action-client :init
                                                  "/spot/pick_object_in_image" spot_msgs::PickObjectInImageAction))
@@ -102,18 +105,53 @@
    (&key (linear-stiffness #f(500 500 500))
 	 (rotational-stiffness #f(60 60 60))
 	 (linear-damping #f(2.5 2.5 2.5))
-	 (rotational-damping #f(1.0 1.0 1.0)))
-   "X is up, Z is forward"
-   (let (m r)
-     (labels
-      ((v2v (v) (instance geometry_msgs::Vector3 :init :x (elt v 0) :y (elt v 1) :z (elt v 2))))
-      (setq m (instance spot_msgs::SetArmImpedanceParamsRequest :init
-			:linear_stiffness     (v2v linear-stiffness)
-			:rotational_stiffness (v2v rotational-stiffness)
-			:linear_damping       (v2v linear-damping)
-			:rotational_damping   (v2v rotational-damping)))
-      (setq r (ros::service-call "/spot/arm_impedance_parameters" m))
-      (send r :success))))
+	 (rotational-damping #f(1.0 1.0 1.0))
+         (update-spot t))
+   "Enable impedance control with current hand pose."
+   (let (m r temp-spot-model target-coords)
+     (if update-spot
+         (progn
+           (send *spot* :angle-vector (send self :state :potentio-vector))
+           (setq target-coords (send (send *spot* :arm :end-coords) :copy-worldcoords))
+           )
+       (progn
+         (setq temp-spot-model (instance spot-robot :init))
+         (send temp-spot-model :angle-vector (send self :state :potentio-vector))
+         (setq target-coords (send (send temp-spot-model :arm :end-coords) :copy-worldcoords))
+         )
+       )
+     (send self :move-arm-impedance-command
+           target-coods
+           :linear-stiffness linear-stiffness
+           :rotational-stiffness rotational-stiffness
+           :linear-damping linear-damping
+           :rotational-damping rotational-damping
+           )
+     ))
+  (:move-arm-impedance-command (target-coords
+                                 &key
+                                 (linear-stiffness #f(500 500 500))
+                                 (rotational-stiffness #f(60 60 60))
+                                 (linear-damping #f(2.5 2.5 2.5))
+                                 (rotational-damping #f(1.0 1.0 1.0)))
+    "Move spot hand to target-coords with impedance control"
+    (let (goal result)
+      (labels
+        ((v2v (v) (instance geometry_msgs::Vector3 :init :x (elt v 0) :y (elt v 1) :z (elt v 2))))
+        (setq goal (instance spot_msgs::ArmImpedanceCommandGoal :init
+                             :target_pose (ros::coords->tf-pose target-coords)
+                             :linear_stiffness     (v2v linear-stiffness)
+                             :rotational_stiffness (v2v rotational-stiffness)
+                             :linear_damping       (v2v linear-damping)
+                             :rotational_damping   (v2v rotational-damping)))
+        (send arm-impedance-command-action :send-goal goal)
+        (send arm-impedance-command-action :wait-for-result)
+        (setq result (send arm-impedance-command-action :get-result))
+        (if (not (send result :success))
+          (ros::ros-error (send result :message))
+          )
+        (send result :success)
+        )))
   (:unstow-arm () (call-trigger-service "/spot/unstow_arm"))
   (:stow-arm () (call-trigger-service "/spot/stow_arm"))
   (:carry () (call-trigger-service "/spot/carry"))
