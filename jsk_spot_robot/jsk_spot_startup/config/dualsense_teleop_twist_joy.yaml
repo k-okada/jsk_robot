@@ -15,3 +15,6 @@ scale_angular_turbo:
   yaw: 2.0
 enable_button: 4
 enable_turbo_button: 10
+# for cmd_vel
+publish_cmd_vel: true
+publish_cmd_vel_rate: 50

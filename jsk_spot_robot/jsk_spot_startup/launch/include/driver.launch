@@ -68,6 +68,7 @@
     <arg name="dock_service" default="dock_fixed_id" />
     <arg name="tuck_service" default="stow_arm" />
     <arg name="untuck_service" default="unstow_arm" />
+    <arg name="publish_cmd_vel_from_quadruped_joystick_teleop" default="true" />
     <arg name="teleop_twist_joy_param_file" default="$(find jsk_spot_startup)/config/dualsense_teleop_twist_joy.yaml" />
   </include>
 

@@ -5,6 +5,92 @@
 #include <std_srvs/SetBool.h>
 #include <sound_play/SoundRequest.h>
 
+// Inlcude cpp because we need definition of TeleopTwistJoy::Impl
+#include "teleop_twist_joy/teleop_twist_joy.cpp"
+
+namespace teleop_twist_joy
+{
+
+/**
+ * Class implementing a basic Joy -> Twist translation.
+ */
+class QuadrupedTwistJoy : public TeleopTwistJoy
+{
+public:
+  QuadrupedTwistJoy(ros::NodeHandle* nh, ros::NodeHandle* nh_param) : TeleopTwistJoy(nh, nh_param)
+  {
+    // stop joy subscribe within TeleopTwistJoy, we want to use them from our main loop;
+  }
+
+  void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg)
+  {
+    //TeleopTwistJoy::pimpl_->joyCallback(msg);
+    int enable_button = TeleopTwistJoy::pimpl_->enable_button;
+    int enable_turbo_button = TeleopTwistJoy::pimpl_->enable_turbo_button;
+    bool sent_disable_msg = TeleopTwistJoy::pimpl_->sent_disable_msg;
+    if (enable_turbo_button >= 0 &&
+	joy_msg->buttons.size() > enable_turbo_button &&
+	joy_msg->buttons[enable_turbo_button])
+      {
+	sendCmdVelMsg(joy_msg, "turbo");
+      }
+    else if (joy_msg->buttons.size() > enable_button &&
+	     joy_msg->buttons[enable_button])
+      {
+	sendCmdVelMsg(joy_msg, "normal");
+      }
+    else
+      {
+	// When enable button is released, immediately send a single no-motion command
+	// in order to stop the robot.
+	if (!sent_disable_msg)
+	  {
+	    // Initializes with zeros by default.
+	    geometry_msgs::Twist cmd_vel_msg;
+	    TeleopTwistJoy::pimpl_->cmd_vel_pub.publish(cmd_vel_msg);
+	    TeleopTwistJoy::pimpl_->sent_disable_msg = true;
+	  }
+      }
+  }
+
+  void sendCmdVelMsg(const sensor_msgs::Joy::ConstPtr& joy_msg,
+		     const std::string& which_map)
+  {
+    // Initializes with zeros by default.
+    geometry_msgs::Twist cmd_vel_msg;
+
+    std::map<std::string, int>axis_linear_map = TeleopTwistJoy::pimpl_->axis_linear_map;
+    std::map< std::string, std::map<std::string, double> > scale_linear_map = TeleopTwistJoy::pimpl_->scale_linear_map;
+    std::map<std::string, int>axis_angular_map = TeleopTwistJoy::pimpl_->axis_angular_map;
+    std::map< std::string, std::map<std::string, double> > scale_angular_map = TeleopTwistJoy::pimpl_->scale_angular_map;
+
+    cmd_vel_msg.linear.x = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "x");
+    cmd_vel_msg.linear.y = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "y");
+    cmd_vel_msg.linear.z = getVal(joy_msg, axis_linear_map, scale_linear_map[which_map], "z");
+    cmd_vel_msg.angular.z = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "yaw");
+    cmd_vel_msg.angular.y = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "pitch");
+    cmd_vel_msg.angular.x = getVal(joy_msg, axis_angular_map, scale_angular_map[which_map], "roll");
+
+    // store command message for main loop
+    //cmd_vel_pub.publish(cmd_vel_msg);
+    //sent_disable_msg = false;
+    cmd_vel_msg_ = cmd_vel_msg;
+    // need to send valid cmd_vel message;
+    TeleopTwistJoy::pimpl_->sent_disable_msg = false;
+  }
+
+  void publishCmdVel() {
+    if ( ! TeleopTwistJoy::pimpl_->sent_disable_msg )  {
+      TeleopTwistJoy::pimpl_->cmd_vel_pub.publish(cmd_vel_msg_);
+    }
+  }
+
+private:
+  geometry_msgs::Twist cmd_vel_msg_;
+};
+
+}  // namespace teleop_twist_joy
+
 class TeleopManager
 {
 public:
@@ -38,6 +124,24 @@ public:
             index = false;
         }
 
+        ROS_INFO_STREAM("button_estop_hard: " << button_estop_hard_);
+        ROS_INFO_STREAM("button_estop_gentle: " << button_estop_gentle_);
+        ROS_INFO_STREAM("button_power_off: " << button_power_off_);
+        ROS_INFO_STREAM("button_power_on: " << button_power_on_);
+        ROS_INFO_STREAM("button_self_right: " << button_self_right_);
+        ROS_INFO_STREAM("button_sit: " << button_sit_);
+        ROS_INFO_STREAM("button_stand: " << button_stand_);
+        ROS_INFO_STREAM("button_stop: " << button_stop_);
+        ROS_INFO_STREAM("button_release: " << button_release_);
+        ROS_INFO_STREAM("button_claim: " << button_claim_);
+        ROS_INFO_STREAM("button_stair_mode: " << button_stair_mode_);
+        ROS_INFO_STREAM("axe_dock: " << axe_dock_);
+        ROS_INFO_STREAM("button_tuck: " << button_tuck_);
+        ROS_INFO_STREAM("axe_tuck: " << axe_tuck_);
+        ROS_INFO_STREAM("num_buttons: " << num_buttons_);
+        ROS_INFO_STREAM("num_axes: " << num_axes_);
+
+
         pub_sound_play_ = nh.advertise<sound_play::SoundRequest>("/robotsound", 1);
 
         client_estop_hard_ = nh.serviceClient<std_srvs::Trigger>("estop/hard");
@@ -60,6 +164,17 @@ public:
         ROS_DEBUG_STREAM("Subscribe : " << sub_joy_.getTopic());
 
         req_next_stair_mode_.data = true;
+
+	//
+	ros::param::param<bool>("~publish_cmd_vel", publish_cmd_vel_, false);
+	ros::param::param<int>("~publish_cmd_vel_rate", publish_cmd_vel_rate_, 100);
+	ROS_INFO_STREAM("publish_cmd_vel: " << publish_cmd_vel_);
+	if ( publish_cmd_vel_ ) ROS_INFO_STREAM("publich_cmd_vel_rate: " << publish_cmd_vel_rate_);
+
+	if ( publish_cmd_vel_ ) {
+	  ros::NodeHandle nh_param("~");
+	  joy_teleop_ = new teleop_twist_joy::QuadrupedTwistJoy(&nh, &nh_param);
+	}
     }
 
     void say(std::string message)
@@ -422,7 +537,26 @@ public:
           ROS_DEBUG("Axe 'tuck' is disabled.");
         }
 
+	// TwistTeleop
+	if ( publish_cmd_vel_ ) {
+	  joy_teleop_->joyCallback(msg);
+	}
     }
+
+  bool isPublishCmdVel() {
+    return publish_cmd_vel_;
+  }
+
+  void publishCmdVelLoop() {
+    // TwistTeleop
+    ros::Rate pub_rate(publish_cmd_vel_rate_);
+    while (ros::ok())
+      {
+	joy_teleop_->publishCmdVel();
+	ros::spinOnce();
+	pub_rate.sleep();
+      }
+  }
 
 private:
     int button_estop_hard_;
@@ -469,7 +603,14 @@ private:
 
     //
     std_srvs::SetBool::Request req_next_stair_mode_;
+
+
+    // data for publich cmd_vel withion TeleopManager
+    teleop_twist_joy::QuadrupedTwistJoy *joy_teleop_;
+    bool publish_cmd_vel_;
+    int publish_cmd_vel_rate_;
 };
+
 
 
 int main(int argc, char** argv)
@@ -480,5 +621,11 @@ int main(int argc, char** argv)
     TeleopManager teleop;
     teleop.init(nh);
 
-    ros::spin();
+    if (teleop.isPublishCmdVel()) {
+	teleop.publishCmdVelLoop();
+	ros::shutdown();
+    } else {
+      ros::spin();
+    }
+    return 0;
 }
