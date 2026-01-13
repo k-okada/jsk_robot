@@ -155,3 +155,22 @@ roscd jsk_spot_startup/apps/head_lead_demo                                      
 
 #### Install apps
 If you would like to call your apps from rwt_app_chooser, you can 
+
+## Setup Developmenet Environment for 1.28 round LCD monitor
+
+- Setup Arduino IDE
+    - Add followingn Board Manager URLs (File -> Preference -> Additional Boards Manager URLs -> Click icon)
+      - `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
+    - Install `esp32` by Espressif Systems 2.0.5 (Tools -> Board -> Boards Manager)
+    - Install following libraries (Tools -> Manage Libraries)
+      - `ArduinoSTL` by Mike Matera 1.3.3
+      - `GFX Library for Arduino` by Moon On Our Nation 1.3.0
+
+- Layout
+    - Use https://dronebotworkshop.com/gc9a01/#ESP32_Hookup information, but you need to check actual pinout from https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/pinouts
+
+- Upload image file
+    - Put your image data under `data/` directory.
+    - Download `arduino-esp32fs-plugin` from `https://github.com/lorol/arduino-esp32fs-plugin/releases`
+    - Put `esp32fs.jar` into tool direcotry (Arduino/tools/ESP32FS/tool/esp32fs.jar).
+    - Noete that upload plugin does not work ArduinoIDE >2.0, You need to use ArduinoIDE 1.x
